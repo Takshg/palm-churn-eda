@@ -1,0 +1,179 @@
+EmployeeID,FlagReason,PerformanceTier,Role,Position,Branch#,BranchName,BranchAvgStars,Wage,AvgWorkingHours/Week,HiredOn,TenureMonths,PromotionStatus,MonthsToPromotion,Current status,Churned,AvgPerfScore,AgeAtHire,HighestEducationLevel,YearsOfRelevantExperience,PastRelevantExperience,hat_M1,cooks_M1,dfbeta_perf_M1
+5764,High Leverage | High Cook's D | DFBETA PerfScore,High Performer,Manager,full-time,1,UBC,3.98,Minimum,48.8,2022-06-13,45.0,Promoted,9.0,Working,0,90.31,18,Bachelor,2,True,0.7751,3.9996,-1.0022
+5853,High Leverage | High Cook's D | DFBETA PerfScore,High Performer,Manager,full-time,4,Main Street,3.79,Minimum,49.1,2024-04-11,23.1,Promoted,2.9,Working,0,90.92,27,Bachelor,2,True,0.609,1.1679,-1.0644
+5572,High Leverage | High Cook's D | DFBETA PerfScore,High Performer,Manager,full-time,1,UBC,3.98,Competitive,49.0,2025-01-13,14.0,Promoted,2.0,Working,0,90.71,26,Bachelor,4,True,0.589,1.074,-0.7323
+5401,High Leverage | High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,1,UBC,3.98,Minimum,42.8,2021-07-14,15.9,Promoted,2.1,Left,1,75.45,23,Bachelor,0,False,0.5253,0.9284,-0.5536
+5680,High Leverage | High Cook's D | DFBETA PerfScore,Other,Shift Lead,full-time,4,Main Street,3.79,Minimum,45.0,2025-05-07,10.2,Promoted,0.7,Working,0,68.69,21,Associate Degree,0,False,0.497,0.8744,-0.4229
+5209,High Leverage | High Cook's D | DFBETA PerfScore,High Performer,Shift Lead,full-time,4,Main Street,3.79,Minimum,47.8,2021-10-12,29.3,Promoted,1.1,Left,1,89.43,22,Associate Degree,3,True,0.4523,0.7089,-0.3939
+5534,High Leverage | High Cook's D | DFBETA PerfScore,Other,Shift Lead,full-time,5,Richmond,3.71,Premium,44.8,2021-11-01,27.9,Promoted,4.0,Left,1,81.91,16,Associate Degree,4,True,0.4128,0.5942,-0.3994
+5289,High Leverage | High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,5,Richmond,3.71,Minimum,42.4,2021-03-12,13.9,Promoted,2.8,Left,1,72.62,24,Bachelor,5,True,0.4117,0.5866,-0.5826
+5822,High Leverage | High Cook's D | DFBETA PerfScore,Other,Shift Lead,full-time,7,Metrotown,3.8,Competitive,44.6,2021-08-31,33.5,Promoted,11.5,Left,1,84.75,17,Bachelor,1,True,0.413,0.581,-0.5464
+5979,High Leverage | High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,1,UBC,3.98,Minimum,40.6,2024-07-01,13.3,Promoted,0.7,Left,1,67.47,23,Associate Degree,6,True,0.3871,0.5376,-0.5596
+5905,High Leverage | High Cook's D | DFBETA PerfScore,Other,Manager,full-time,2,SFU,4.03,Minimum,47.8,2024-12-16,14.9,Promoted,2.5,Working,0,82.19,23,Associate Degree,4,True,0.2357,0.3494,-0.343
+5967,High Leverage | High Cook's D | DFBETA PerfScore,Other,Shift Lead,full-time,1,UBC,3.98,Minimum,44.6,2022-11-09,32.0,Promoted,12.8,Left,1,81.78,22,Associate Degree,2,True,0.2333,0.3484,-0.4082
+5672,High Leverage | High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,6,Surrey,3.97,Competitive,44.6,2022-09-27,21.1,Promoted,4.7,Left,1,89.06,20,Master,3,True,0.2046,0.3402,-0.2926
+5159,High Leverage | High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,1,UBC,3.98,Competitive,41.4,2021-06-18,14.8,Promoted,6.6,Left,1,76.11,23,High School,0,False,0.1931,0.3209,-0.3643
+6037,High Leverage | High Cook's D | DFBETA PerfScore,High Performer,Shift Lead,full-time,7,Metrotown,3.8,Competitive,47.2,2023-03-05,23.0,Promoted,7.5,Left,1,95.57,21,Bachelor,3,True,0.1633,0.3051,-0.2986
+6019,High Leverage | High Cook's D | DFBETA PerfScore,Other,Manager,full-time,4,Main Street,3.79,Minimum,47.9,2023-10-16,28.9,Promoted,2.0,Working,0,82.24,16,High School,2,True,0.1453,0.2922,-0.3209
+5541,High Leverage | High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,1,UBC,3.98,Competitive,41.9,2023-08-20,18.9,Promoted,1.9,Left,1,81.76,16,High School,2,True,0.1443,0.2912,-0.3064
+5458,High Leverage | High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,5,Richmond,3.71,Competitive,41.3,2024-04-26,15.3,Promoted,4.1,Left,1,75.9,21,Bachelor,1,True,0.1493,0.2869,-0.3378
+5955,High Leverage | High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,2,SFU,4.03,Premium,39.5,2024-05-26,15.9,Promoted,1.0,Left,1,66.31,23,Associate Degree,1,True,0.1294,0.2785,-0.3275
+5697,High Leverage | High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,7,Metrotown,3.8,Competitive,39.5,2023-12-14,20.8,Promoted,5.4,Left,1,71.3,18,High School,1,True,0.1306,0.2764,-0.3472
+5215,High Leverage | High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,7,Metrotown,3.8,Competitive,41.3,2022-11-13,13.3,Promoted,2.2,Left,1,78.82,17,Associate Degree,4,True,0.1157,0.2731,-0.3056
+5997,High Leverage | High Cook's D | DFBETA PerfScore,High Performer,Manager,full-time,1,UBC,3.98,Minimum,50.4,2024-02-26,24.5,Promoted,10.9,Working,0,89.35,18,Bachelor,3,True,0.0955,0.2614,-0.323
+5097,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,5,Richmond,3.71,Competitive,47.8,2024-08-17,18.9,Promoted,5.7,Working,0,81.55,17,High School,2,True,0.0889,0.2597,-0.305
+5552,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,7,Metrotown,3.8,Premium,48.3,2024-09-01,18.4,Promoted,5.0,Working,0,77.99,21,Bachelor,1,True,0.0835,0.2571,-0.3106
+5789,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,2,SFU,4.03,Competitive,39.0,2021-01-16,14.2,Promoted,2.1,Left,1,68.66,22,High School,6,True,0.0838,0.2555,-0.3245
+5454,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,1,UBC,3.98,Competitive,49.2,2024-06-20,20.8,Promoted,6.2,Working,0,77.7,35,Master,0,False,0.0625,0.2474,-0.3012
+5132,High Cook's D | DFBETA PerfScore,High Performer,Manager,full-time,7,Metrotown,3.8,Competitive,51.1,2024-06-11,21.1,Promoted,6.5,Working,0,88.81,29,Bachelor,3,True,0.0535,0.2404,-0.2939
+5362,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,3,Downtown,3.91,Minimum,50.1,2023-04-11,35.1,Promoted,9.0,Working,0,82.86,25,Associate Degree,4,True,0.0491,0.2394,-0.2931
+5035,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,3,Downtown,3.91,Minimum,41.6,2021-07-07,14.1,Promoted,3.4,Left,1,78.45,22,Associate Degree,2,True,0.0399,0.2339,-0.2878
+5303,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,6,Surrey,3.97,Competitive,49.0,2024-01-18,25.8,Promoted,3.4,Working,0,82.47,19,High School,4,True,0.0365,0.2336,-0.2921
+5785,High Cook's D | DFBETA PerfScore,High Performer,Manager,full-time,7,Metrotown,3.8,Minimum,51.1,2024-02-16,24.9,Promoted,4.8,Working,0,90.8,23,Bachelor,2,True,0.0411,0.2318,-0.2992
+5468,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,3,Downtown,3.91,Competitive,41.9,2023-01-31,21.9,Promoted,12.5,Left,1,81.92,25,Associate Degree,3,True,0.0305,0.2308,-0.2965
+5418,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,6,Surrey,3.97,Minimum,50.0,2025-04-02,11.4,Promoted,2.7,Working,0,83.44,18,High School,2,True,0.0279,0.2302,-0.2975
+5448,High Cook's D | DFBETA PerfScore,High Performer,Manager,full-time,5,Richmond,3.71,Competitive,50.9,2024-05-02,22.4,Promoted,0.5,Working,0,90.76,21,Master,2,True,0.031,0.2299,-0.2945
+5636,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,2,SFU,4.03,Minimum,39.5,2021-03-17,16.4,Promoted,9.0,Left,1,69.8,22,High School,5,True,0.031,0.2296,-0.298
+5403,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,2,SFU,4.03,Competitive,50.0,2024-06-24,20.6,Promoted,2.8,Working,0,81.86,29,Associate Degree,2,True,0.0261,0.2293,-0.292
+5150,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,1,UBC,3.98,Minimum,43.8,2021-07-15,17.8,Promoted,7.0,Left,1,88.16,26,Bachelor,3,True,0.0235,0.2282,-0.2899
+5396,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,6,Surrey,3.97,Minimum,49.1,2025-02-19,12.7,Promoted,3.5,Working,0,78.45,23,Bachelor,5,True,0.024,0.2279,-0.2916
+5171,High Cook's D | DFBETA PerfScore,High Performer,Manager,full-time,7,Metrotown,3.8,Competitive,51.4,2024-12-02,15.3,Promoted,5.6,Working,0,90.95,20,Bachelor,2,True,0.023,0.2275,-0.2954
+5388,High Cook's D | DFBETA PerfScore,High Performer,Manager,full-time,2,SFU,4.03,Minimum,52.1,2022-10-14,41.0,Promoted,3.9,Working,0,91.77,21,Bachelor,3,True,0.0233,0.227,-0.2919
+5818,High Cook's D | DFBETA PerfScore,Other,Server,full-time,1,UBC,3.98,Minimum,40.6,2024-11-21,9.3,Promoted,2.2,Left,1,74.83,22,Master,1,True,0.0225,0.2266,-0.2921
+5072,High Cook's D | DFBETA PerfScore,Other,Server,full-time,1,UBC,3.98,Minimum,38.8,2022-06-30,10.2,Promoted,1.0,Fired,1,69.94,18,Associate Degree,1,True,0.0195,0.2255,-0.2928
+5059,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,4,Main Street,3.79,Minimum,39.8,2023-06-30,15.6,Promoted,6.6,Left,1,75.23,20,Master,1,True,0.0164,0.2243,-0.2899
+5178,High Cook's D | DFBETA PerfScore,High Performer,Shift Lead,full-time,3,Downtown,3.91,Premium,43.6,2022-12-30,29.6,Promoted,3.9,Left,1,86.18,17,Associate Degree,4,True,0.0139,0.2239,-0.291
+5051,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,3,Downtown,3.91,Competitive,50.0,2024-10-03,17.3,Promoted,0.5,Working,0,83.11,21,High School,4,True,0.0128,0.2233,-0.2906
+5163,High Cook's D | DFBETA PerfScore,Other,Server,full-time,1,UBC,3.98,Competitive,39.7,2023-02-15,7.9,Promoted,1.3,Left,1,75.18,25,Bachelor,0,False,0.0126,0.2231,-0.2925
+5170,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,6,Surrey,3.97,Minimum,42.5,2021-09-17,14.4,Promoted,1.7,Left,1,91.68,17,Bachelor,2,True,0.0093,0.2223,-0.2907
+5932,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,5,Richmond,3.71,Competitive,40.1,2023-03-26,14.5,Promoted,3.0,Left,1,78.53,20,High School,4,True,0.0103,0.2221,-0.2902
+5705,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,5,Richmond,3.71,Minimum,41.3,2021-11-15,12.8,Promoted,4.1,Left,1,80.92,30,High School,2,True,0.0073,0.2212,-0.2904
+5172,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,5,Richmond,3.71,Minimum,49.6,2024-10-27,16.5,Promoted,8.0,Working,0,77.32,26,Bachelor,0,False,0.0066,0.2209,-0.2899
+5831,High Cook's D | DFBETA PerfScore,High Performer,Shift Lead,full-time,6,Surrey,3.97,Competitive,44.4,2023-05-07,26.3,Promoted,9.2,Left,1,93.55,21,Associate Degree,3,True,0.0064,0.2207,-0.2899
+5843,High Cook's D | DFBETA PerfScore,Other,Server,full-time,3,Downtown,3.91,Competitive,38.6,2024-12-25,8.4,Promoted,0.5,Left,1,73.84,19,Associate Degree,1,True,0.0065,0.2206,-0.2905
+5744,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,4,Main Street,3.79,Minimum,50.6,2024-12-18,14.8,Promoted,2.1,Working,0,78.83,23,Bachelor,6,True,0.0047,0.2201,-0.2899
+5369,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,5,Richmond,3.71,Minimum,39.9,2021-06-02,10.5,Promoted,4.5,Left,1,83.13,17,Bachelor,1,True,0.0045,0.2201,-0.29
+6052,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,2,SFU,4.03,Competitive,41.5,2024-08-01,11.8,Promoted,0.5,Left,1,88.21,22,Bachelor,2,True,0.0042,0.22,-0.2896
+5368,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,7,Metrotown,3.8,Competitive,40.3,2022-11-21,14.8,Promoted,6.0,Left,1,80.29,27,High School,4,True,0.0043,0.22,-0.2902
+5752,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,5,Richmond,3.71,Competitive,40.3,2021-05-20,21.3,Promoted,9.2,Left,1,82.92,24,Bachelor,0,False,0.0042,0.2199,-0.29
+5522,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,6,Surrey,3.97,Competitive,50.2,2024-05-31,21.4,Promoted,4.7,Working,0,79.7,25,Master,1,True,0.004,0.2199,-0.2897
+5851,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,5,Richmond,3.71,Minimum,48.5,2025-02-15,12.9,Promoted,3.9,Working,0,70.34,21,Associate Degree,5,True,0.0037,0.2198,-0.2898
+5372,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,2,SFU,4.03,Competitive,47.8,2024-03-03,24.3,Promoted,1.4,Working,0,71.09,17,High School,0,False,0.0024,0.2193,-0.2897
+5655,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,4,Main Street,3.79,Minimum,50.2,2024-07-31,19.4,Promoted,6.5,Working,0,78.02,23,Bachelor,1,True,0.0026,0.2193,-0.2896
+5668,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,2,SFU,4.03,Minimum,41.5,2022-06-04,22.0,Promoted,0.3,Left,1,89.04,18,Bachelor,4,True,0.0023,0.2192,-0.2896
+5577,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,3,Downtown,3.91,Premium,41.8,2024-03-05,17.6,Promoted,3.6,Left,1,87.35,25,High School,2,True,0.002,0.2191,-0.2896
+5776,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,6,Surrey,3.97,Premium,41.2,2023-10-15,22.1,Promoted,6.4,Left,1,89.16,16,High School,2,True,0.0019,0.2191,-0.2897
+5397,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,2,SFU,4.03,Competitive,41.0,2023-04-15,22.5,Promoted,2.2,Fired,1,87.03,26,High School,2,True,0.0017,0.219,-0.2896
+5770,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,5,Richmond,3.71,Minimum,51.7,2024-12-25,14.6,Promoted,2.8,Working,0,82.39,22,Associate Degree,3,True,0.0018,0.2189,-0.2896
+5270,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,4,Main Street,3.79,Premium,41.5,2024-02-29,18.1,Promoted,0.8,Left,1,84.73,27,Bachelor,7,True,0.0012,0.2188,-0.2896
+5027,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,5,Richmond,3.71,Minimum,41.5,2023-08-19,18.1,Promoted,0.8,Left,1,91.24,20,Bachelor,2,True,0.0012,0.2188,-0.2895
+5732,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,1,UBC,3.98,Competitive,41.2,2023-11-11,11.8,Promoted,2.0,Left,1,87.62,34,Bachelor,2,True,0.0012,0.2188,-0.2896
+5257,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,7,Metrotown,3.8,Minimum,40.3,2023-02-16,15.3,Promoted,7.0,Fired,1,85.78,18,Associate Degree,4,True,0.0014,0.2188,-0.2895
+5849,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,4,Main Street,3.79,Competitive,40.5,2023-04-16,22.4,Promoted,10.2,Fired,1,86.37,29,PhD,0,False,0.0014,0.2188,-0.2897
+5237,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,3,Downtown,3.91,Minimum,49.1,2024-07-07,20.2,Promoted,1.8,Working,0,69.15,26,Associate Degree,1,True,0.0013,0.2188,-0.2895
+5797,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,6,Surrey,3.97,Minimum,37.8,2021-10-22,16.0,Promoted,5.7,Left,1,76.14,22,Master,0,False,0.0008,0.2186,-0.2894
+5949,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,4,Main Street,3.79,Competitive,39.5,2022-05-01,21.6,Promoted,11.5,Left,1,86.97,16,Associate Degree,3,True,0.0007,0.2186,-0.2894
+5988,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,6,Surrey,3.97,Minimum,40.1,2024-01-28,17.3,Promoted,2.7,Left,1,83.1,24,Associate Degree,3,True,0.0009,0.2186,-0.2894
+5189,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,5,Richmond,3.71,Minimum,39.5,2023-07-29,17.4,Promoted,1.1,Left,1,80.35,24,Associate Degree,3,True,0.0009,0.2186,-0.2894
+5249,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,3,Downtown,3.91,Minimum,51.3,2024-03-14,24.0,Promoted,8.9,Working,0,76.21,24,Bachelor,5,True,0.0008,0.2186,-0.2895
+5716,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,6,Surrey,3.97,Competitive,39.7,2021-07-20,13.9,Promoted,1.5,Left,1,88.97,17,Bachelor,3,True,0.0005,0.2185,-0.2894
+5381,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,3,Downtown,3.91,Competitive,40.2,2024-08-30,11.7,Promoted,5.1,Left,1,89.59,20,Bachelor,2,True,0.0006,0.2185,-0.2894
+6060,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,2,SFU,4.03,Minimum,40.2,2024-05-07,18.7,Promoted,1.1,Left,1,83.76,23,Bachelor,8,True,0.0007,0.2185,-0.2895
+5836,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,3,Downtown,3.91,Competitive,38.8,2021-12-27,14.7,Promoted,3.8,Left,1,82.42,18,Bachelor,6,True,0.0007,0.2185,-0.2895
+5094,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,2,SFU,4.03,Premium,41.1,2021-04-21,17.7,Promoted,4.8,Left,1,87.41,22,Bachelor,9,True,0.0005,0.2185,-0.2894
+5326,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,4,Main Street,3.79,Minimum,49.7,2024-10-10,17.1,Promoted,7.4,Working,0,70.09,26,High School,1,True,0.0007,0.2185,-0.2894
+5354,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,1,UBC,3.98,Competitive,38.3,2022-04-27,14.4,Promoted,6.3,Left,1,78.32,23,Associate Degree,4,True,0.0007,0.2185,-0.2895
+5122,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,2,SFU,4.03,Minimum,39.1,2021-12-28,10.5,Promoted,4.6,Left,1,83.87,18,Associate Degree,3,True,0.0006,0.2185,-0.2894
+5280,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,1,UBC,3.98,Minimum,39.3,2021-12-27,22.7,Promoted,7.4,Left,1,86.72,16,Associate Degree,4,True,0.0003,0.2184,-0.2894
+5271,High Cook's D | DFBETA PerfScore,High Performer,Shift Lead,full-time,2,SFU,4.03,Minimum,41.8,2022-04-23,31.3,Promoted,4.5,Left,1,89.79,23,High School,3,True,0.0003,0.2184,-0.2894
+6056,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,3,Downtown,3.91,Premium,50.2,2025-02-13,12.9,Promoted,3.2,Working,0,70.11,19,Associate Degree,0,False,0.0003,0.2184,-0.2894
+5361,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,3,Downtown,3.91,Premium,36.5,2022-07-05,13.3,Promoted,2.9,Left,1,71.87,21,Associate Degree,1,True,0.0004,0.2184,-0.2894
+5082,High Cook's D | DFBETA PerfScore,Other,Bartender,part-time,6,Surrey,3.97,Competitive,23.3,2024-08-07,16.7,Promoted,0.3,Left,1,68.39,24,Associate Degree,8,True,0.0,0.2183,-0.2894
+5482,High Cook's D | DFBETA PerfScore,High Performer,Server,full-time,5,Richmond,3.71,Premium,37.2,2022-02-21,9.3,Promoted,0.3,Left,1,95.52,19,Bachelor,4,True,0.0,0.2183,-0.2894
+5868,High Cook's D | DFBETA PerfScore,High Performer,Shift Lead,part-time,7,Metrotown,3.8,Competitive,24.7,2021-06-27,26.2,Promoted,4.8,Fired,1,90.01,16,Associate Degree,2,True,0.0,0.2183,-0.2894
+5983,High Cook's D | DFBETA PerfScore,High Performer,Bartender,part-time,7,Metrotown,3.8,Competitive,23.6,2021-03-19,11.9,Promoted,3.4,Left,1,88.08,18,Bachelor,4,True,0.0,0.2183,-0.2894
+5046,High Cook's D | DFBETA PerfScore,High Performer,Server,full-time,5,Richmond,3.71,Premium,39.6,2025-03-08,7.9,Promoted,0.9,Left,1,89.6,34,Bachelor,3,True,0.0,0.2183,-0.2894
+5127,High Cook's D | DFBETA PerfScore,High Performer,Server,full-time,5,Richmond,3.71,Premium,39.2,2022-06-24,8.0,Promoted,0.6,Left,1,90.64,21,Bachelor,2,True,0.0,0.2183,-0.2894
+5976,High Cook's D | DFBETA PerfScore,High Performer,Shift Lead,part-time,7,Metrotown,3.8,Competitive,26.6,2021-04-18,22.1,Promoted,7.7,Left,1,90.36,21,High School,2,True,0.0,0.2183,-0.2894
+5661,High Cook's D | DFBETA PerfScore,High Performer,Bartender,part-time,7,Metrotown,3.8,Premium,21.3,2024-04-11,15.9,Promoted,5.6,Left,1,96.63,25,Bachelor,2,True,0.0,0.2183,-0.2894
+5579,High Cook's D | DFBETA PerfScore,Other,Bartender,part-time,5,Richmond,3.71,Competitive,21.9,2023-11-05,11.2,Promoted,5.0,Left,1,69.07,16,High School,1,True,0.0,0.2183,-0.2894
+5295,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,7,Metrotown,3.8,Competitive,38.8,2021-09-24,16.7,Promoted,8.9,Left,1,94.14,20,PhD,2,True,0.0,0.2183,-0.2894
+5708,High Cook's D | DFBETA PerfScore,Other,Bartender,part-time,5,Richmond,3.71,Competitive,21.7,2022-06-13,10.3,Promoted,0.0,Left,1,81.34,18,Associate Degree,4,True,0.0,0.2183,-0.2894
+5707,High Cook's D | DFBETA PerfScore,Other,Bartender,part-time,7,Metrotown,3.8,Minimum,23.5,2024-07-01,10.6,Promoted,2.9,Left,1,81.51,28,Bachelor,0,False,0.0,0.2183,-0.2894
+5986,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,7,Metrotown,3.8,Minimum,39.8,2021-01-27,19.1,Promoted,9.4,Left,1,96.82,17,Bachelor,2,True,0.0,0.2183,-0.2894
+5182,High Cook's D | DFBETA PerfScore,Other,Server,part-time,7,Metrotown,3.8,Minimum,19.5,2024-02-29,8.2,Promoted,0.7,Left,1,72.38,30,Associate Degree,1,True,0.0,0.2183,-0.2894
+5186,High Cook's D | DFBETA PerfScore,Other,Bartender,part-time,7,Metrotown,3.8,Minimum,20.1,2021-05-02,17.9,Promoted,4.7,Left,1,79.69,16,Associate Degree,3,True,0.0,0.2183,-0.2894
+5553,High Cook's D | DFBETA PerfScore,High Performer,Server,full-time,6,Surrey,3.97,Minimum,39.6,2022-10-17,6.9,Promoted,0.1,Left,1,91.26,23,Bachelor,3,True,0.0,0.2183,-0.2894
+5224,High Cook's D | DFBETA PerfScore,Other,Bartender,full-time,7,Metrotown,3.8,Minimum,38.1,2024-09-03,12.5,Promoted,5.0,Left,1,80.28,25,High School,4,True,0.0001,0.2183,-0.2894
+5113,High Cook's D | DFBETA PerfScore,Other,Bartender,part-time,7,Metrotown,3.8,Minimum,23.5,2023-09-03,13.0,Promoted,3.5,Left,1,79.7,37,Associate Degree,3,True,0.0,0.2183,-0.2894
+5555,High Cook's D | DFBETA PerfScore,Other,Server,full-time,6,Surrey,3.97,Competitive,37.3,2024-10-01,7.0,Promoted,1.1,Left,1,79.66,17,High School,2,True,0.0002,0.2183,-0.2894
+5726,High Cook's D | DFBETA PerfScore,Other,Server,part-time,6,Surrey,3.97,Minimum,20.3,2024-02-01,8.7,Promoted,2.6,Left,1,81.29,19,High School,2,True,0.0,0.2183,-0.2894
+5775,High Cook's D | DFBETA PerfScore,High Performer,Server,part-time,6,Surrey,3.97,Competitive,20.9,2023-09-08,9.0,Promoted,0.8,Left,1,88.98,19,Bachelor,2,True,0.0,0.2183,-0.2894
+5543,High Cook's D | DFBETA PerfScore,High Performer,Bartender,part-time,6,Surrey,3.97,Minimum,20.8,2023-11-02,10.3,Promoted,1.7,Left,1,86.57,17,Bachelor,3,True,0.0,0.2183,-0.2894
+5564,High Cook's D | DFBETA PerfScore,High Performer,Shift Lead,part-time,6,Surrey,3.97,Minimum,24.4,2022-08-20,33.6,Promoted,7.4,Left,1,86.59,20,High School,3,True,0.0,0.2183,-0.2894
+5749,High Cook's D | DFBETA PerfScore,Other,Bartender,part-time,6,Surrey,3.97,Minimum,21.6,2023-03-20,10.9,Promoted,1.2,Left,1,74.39,17,Associate Degree,0,False,0.0,0.2183,-0.2894
+6062,High Cook's D | DFBETA PerfScore,High Performer,Shift Lead,part-time,6,Surrey,3.97,Minimum,27.1,2021-03-15,23.1,Promoted,0.1,Left,1,91.72,19,Master,2,True,0.0,0.2183,-0.2894
+5684,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,6,Surrey,3.97,Competitive,39.5,2021-01-17,11.3,Promoted,2.9,Left,1,93.17,25,Bachelor,3,True,0.0,0.2183,-0.2894
+5884,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,7,Metrotown,3.8,Premium,40.2,2021-03-01,12.8,Promoted,6.2,Left,1,96.41,23,Bachelor,3,True,0.0,0.2183,-0.2894
+5693,High Cook's D | DFBETA PerfScore,High Performer,Bartender,part-time,6,Surrey,3.97,Competitive,23.1,2022-10-03,19.2,Promoted,3.7,Left,1,89.81,25,High School,4,True,0.0,0.2183,-0.2894
+5261,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,6,Surrey,3.97,Premium,37.5,2023-04-29,18.1,Promoted,1.0,Left,1,92.57,18,Bachelor,4,True,0.0,0.2183,-0.2894
+5556,High Cook's D | DFBETA PerfScore,Other,Bartender,part-time,6,Surrey,3.97,Minimum,22.9,2022-01-27,13.4,Promoted,6.0,Left,1,75.11,27,Bachelor,10,True,0.0,0.2183,-0.2894
+5549,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,7,Metrotown,3.8,Competitive,38.1,2022-10-11,17.1,Promoted,1.2,Left,1,89.5,18,Bachelor,2,True,0.0,0.2183,-0.2894
+5751,High Cook's D | DFBETA PerfScore,High Performer,Bartender,part-time,7,Metrotown,3.8,Competitive,23.4,2024-01-25,14.4,Promoted,6.0,Left,1,88.62,31,Master,4,True,0.0,0.2183,-0.2894
+5828,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,6,Surrey,3.97,Minimum,38.5,2024-07-04,15.3,Promoted,0.6,Left,1,88.59,17,High School,2,True,0.0001,0.2183,-0.2894
+6057,High Cook's D | DFBETA PerfScore,High Performer,Bartender,part-time,4,Main Street,3.79,Minimum,21.8,2022-07-06,19.4,Promoted,0.8,Left,1,87.3,20,Bachelor,2,True,0.0,0.2183,-0.2894
+5130,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,5,Richmond,3.71,Competitive,38.2,2024-04-28,13.2,Promoted,1.2,Left,1,86.38,26,High School,2,True,0.0,0.2183,-0.2894
+5652,High Cook's D | DFBETA PerfScore,Other,Shift Lead,part-time,2,SFU,4.03,Minimum,25.1,2021-08-30,25.8,Promoted,9.0,Left,1,74.02,17,Associate Degree,5,True,0.0,0.2183,-0.2894
+5631,High Cook's D | DFBETA PerfScore,High Performer,Shift Lead,part-time,3,Downtown,3.91,Minimum,26.7,2023-09-03,25.6,Promoted,0.5,Left,1,93.63,22,Bachelor,3,True,0.0,0.2183,-0.2894
+5930,High Cook's D | DFBETA PerfScore,High Performer,Shift Lead,part-time,3,Downtown,3.91,Competitive,26.5,2022-10-17,34.8,Promoted,2.2,Left,1,93.49,21,Bachelor,2,True,0.0,0.2183,-0.2894
+5686,High Cook's D | DFBETA PerfScore,Other,Server,full-time,2,SFU,4.03,Competitive,35.4,2023-10-16,8.4,Promoted,2.2,Left,1,79.9,23,Bachelor,5,True,0.0,0.2183,-0.2894
+5254,High Cook's D | DFBETA PerfScore,High Performer,Server,part-time,2,SFU,4.03,Minimum,20.3,2022-12-31,8.9,Promoted,0.2,Left,1,89.68,20,Bachelor,2,True,0.0,0.2183,-0.2894
+5657,High Cook's D | DFBETA PerfScore,High Performer,Bartender,part-time,2,SFU,4.03,Competitive,22.6,2022-01-01,11.3,Promoted,0.8,Left,1,85.48,20,Associate Degree,2,True,0.0,0.2183,-0.2894
+5881,High Cook's D | DFBETA PerfScore,Other,Bartender,part-time,2,SFU,4.03,Competitive,22.5,2024-08-31,12.6,Promoted,5.8,Left,1,79.34,24,Bachelor,1,True,0.0,0.2183,-0.2894
+5187,High Cook's D | DFBETA PerfScore,Other,Bartender,part-time,2,SFU,4.03,Competitive,23.6,2024-01-19,13.8,Promoted,5.0,Left,1,74.32,20,Bachelor,1,True,0.0,0.2183,-0.2894
+5464,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,2,SFU,4.03,Minimum,38.7,2023-10-28,14.7,Promoted,3.5,Left,1,88.42,16,High School,2,True,0.0001,0.2183,-0.2894
+5092,High Cook's D | DFBETA PerfScore,Other,Bartender,part-time,2,SFU,4.03,Competitive,20.6,2024-08-13,15.1,Promoted,7.9,Left,1,80.09,18,Associate Degree,3,True,0.0,0.2183,-0.2894
+5559,High Cook's D | DFBETA PerfScore,Other,Bartender,part-time,2,SFU,4.03,Minimum,20.1,2021-02-06,17.0,Promoted,7.1,Left,1,82.22,16,Associate Degree,4,True,0.0,0.2183,-0.2894
+5800,High Cook's D | DFBETA PerfScore,High Performer,Bartender,part-time,2,SFU,4.03,Competitive,22.9,2023-08-12,19.9,Promoted,7.4,Left,1,96.83,24,Bachelor,2,True,0.0,0.2183,-0.2894
+5946,High Cook's D | DFBETA PerfScore,Other,Shift Lead,part-time,2,SFU,4.03,Minimum,27.6,2021-02-03,35.2,Promoted,15.8,Left,1,73.51,27,Associate Degree,1,True,0.0,0.2183,-0.2894
+5043,High Cook's D | DFBETA PerfScore,High Performer,Bartender,part-time,3,Downtown,3.91,Minimum,23.2,2022-09-02,19.8,Promoted,8.5,Left,1,91.64,18,Bachelor,2,True,0.0,0.2183,-0.2894
+5264,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,2,SFU,4.03,Minimum,52.5,2025-03-09,12.2,Promoted,2.9,Working,0,80.26,18,High School,2,True,0.0002,0.2183,-0.2894
+5902,High Cook's D | DFBETA PerfScore,Other,Server,full-time,1,UBC,3.98,Competitive,36.2,2023-01-14,8.0,Promoted,0.2,Left,1,77.68,21,Bachelor,1,True,0.0,0.2183,-0.2894
+5841,High Cook's D | DFBETA PerfScore,Other,Server,full-time,1,UBC,3.98,Competitive,35.4,2024-03-06,8.2,Promoted,0.5,Left,1,83.79,25,Master,2,True,0.0,0.2183,-0.2894
+5151,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,1,UBC,3.98,Competitive,39.7,2022-02-11,10.6,Promoted,3.3,Left,1,95.6,19,Bachelor,3,True,0.0,0.2183,-0.2894
+5420,High Cook's D | DFBETA PerfScore,Other,Bartender,part-time,1,UBC,3.98,Minimum,22.7,2021-04-05,15.1,Promoted,3.4,Left,1,83.94,28,Bachelor,8,True,0.0,0.2183,-0.2894
+5598,High Cook's D | DFBETA PerfScore,High Performer,Bartender,part-time,1,UBC,3.98,Premium,20.6,2022-10-30,17.0,Promoted,4.9,Fired,1,93.01,32,Bachelor,3,True,0.0,0.2183,-0.2894
+5071,High Cook's D | DFBETA PerfScore,High Performer,Bartender,part-time,1,UBC,3.98,Competitive,20.7,2022-02-16,20.1,Promoted,5.7,Left,1,93.36,16,Bachelor,3,True,0.0,0.2183,-0.2894
+5607,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,1,UBC,3.98,Competitive,36.5,2023-08-30,22.0,Promoted,10.9,Left,1,90.04,20,High School,4,True,0.0,0.2183,-0.2894
+5991,High Cook's D | DFBETA PerfScore,High Performer,Shift Lead,part-time,1,UBC,3.98,Minimum,28.2,2021-07-28,26.1,Promoted,14.4,Left,1,88.24,29,Bachelor,3,True,0.0,0.2183,-0.2894
+5203,High Cook's D | DFBETA PerfScore,High Performer,Shift Lead,part-time,1,UBC,3.98,Minimum,24.3,2021-08-09,35.6,Promoted,11.4,Left,1,94.64,20,Bachelor,2,True,0.0,0.2183,-0.2894
+5557,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,1,UBC,3.98,Competitive,52.0,2024-09-04,18.3,Promoted,4.7,Working,0,71.92,19,Associate Degree,0,False,0.0,0.2183,-0.2894
+5833,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,3,Downtown,3.91,Competitive,39.0,2023-04-20,22.4,Promoted,4.9,Left,1,88.51,18,High School,2,True,0.0002,0.2183,-0.2894
+6026,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,3,Downtown,3.91,Competitive,40.3,2022-05-09,18.5,Promoted,7.2,Left,1,90.97,30,Bachelor,2,True,0.0001,0.2183,-0.2894
+5984,High Cook's D | DFBETA PerfScore,Other,Bartender,part-time,5,Richmond,3.71,Competitive,22.6,2022-08-26,16.8,Promoted,1.9,Fired,1,74.27,20,High School,5,True,0.0,0.2183,-0.2894
+5928,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,4,Main Street,3.79,Minimum,40.1,2021-12-26,14.5,Promoted,2.5,Left,1,95.45,17,Bachelor,4,True,0.0,0.2183,-0.2894
+5479,High Cook's D | DFBETA PerfScore,Other,Bartender,part-time,5,Richmond,3.71,Premium,23.9,2021-02-14,19.3,Promoted,3.6,Fired,1,84.93,17,Associate Degree,3,True,0.0,0.2183,-0.2894
+5624,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,5,Richmond,3.71,Premium,38.4,2021-11-23,22.2,Promoted,11.6,Left,1,89.09,18,Master,2,True,0.0,0.2183,-0.2894
+5090,High Cook's D | DFBETA PerfScore,Other,Shift Lead,part-time,5,Richmond,3.71,Competitive,22.4,2022-01-10,23.2,Promoted,1.0,Left,1,68.13,30,Associate Degree,5,True,0.0,0.2183,-0.2894
+6045,High Cook's D | DFBETA PerfScore,Other,Shift Lead,part-time,5,Richmond,3.71,Premium,25.4,2022-12-08,34.5,Promoted,7.2,Left,1,82.4,25,Bachelor,9,True,0.0,0.2183,-0.2894
+5551,High Cook's D | DFBETA PerfScore,Other,Manager,full-time,5,Richmond,3.71,Minimum,51.2,2023-11-20,27.8,Promoted,13.2,Working,0,68.15,19,High School,1,True,0.0,0.2183,-0.2894
+6012,High Cook's D | DFBETA PerfScore,Other,Server,part-time,4,Main Street,3.79,Competitive,21.4,2024-09-05,7.7,Promoted,1.6,Left,1,85.1,23,Bachelor,2,True,0.0,0.2183,-0.2894
+5966,High Cook's D | DFBETA PerfScore,High Performer,Server,full-time,4,Main Street,3.79,Competitive,37.3,2023-04-02,8.1,Promoted,1.0,Left,1,95.32,22,Bachelor,2,True,0.0,0.2183,-0.2894
+5233,High Cook's D | DFBETA PerfScore,Other,Server,part-time,4,Main Street,3.79,Minimum,21.8,2021-08-31,8.6,Promoted,1.4,Fired,1,81.5,23,High School,4,True,0.0,0.2183,-0.2894
+5911,High Cook's D | DFBETA PerfScore,High Performer,Server,full-time,4,Main Street,3.79,Competitive,37.2,2024-05-12,9.8,Promoted,1.2,Left,1,90.08,17,High School,2,True,0.0,0.2183,-0.2894
+6058,High Cook's D | DFBETA PerfScore,High Performer,Bartender,part-time,4,Main Street,3.79,Competitive,23.5,2024-02-02,12.5,Promoted,0.8,Left,1,97.93,21,Bachelor,2,True,0.0,0.2183,-0.2894
+5639,High Cook's D | DFBETA PerfScore,Other,Bartender,part-time,4,Main Street,3.79,Minimum,21.8,2022-09-18,13.6,Promoted,5.0,Left,1,69.31,19,High School,0,False,0.0,0.2183,-0.2894
+5842,High Cook's D | DFBETA PerfScore,High Performer,Bartender,part-time,4,Main Street,3.79,Minimum,20.4,2023-03-01,14.9,Promoted,0.9,Left,1,89.45,16,High School,2,True,0.0,0.2183,-0.2894
+5308,High Cook's D | DFBETA PerfScore,Other,Bartender,part-time,3,Downtown,3.91,Competitive,22.3,2021-06-05,16.9,Promoted,2.9,Left,1,77.59,28,Bachelor,0,False,0.0,0.2183,-0.2894
+5133,High Cook's D | DFBETA PerfScore,High Performer,Bartender,part-time,4,Main Street,3.79,Premium,22.1,2022-01-06,16.8,Promoted,5.4,Fired,1,95.45,18,Bachelor,3,True,0.0,0.2183,-0.2894
+5794,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,4,Main Street,3.79,Competitive,39.8,2024-03-12,17.5,Promoted,0.5,Left,1,96.7,20,Master,4,True,0.0,0.2183,-0.2894
+5114,High Cook's D | DFBETA PerfScore,Other,Shift Lead,part-time,4,Main Street,3.79,Minimum,25.3,2022-01-06,24.6,Promoted,1.5,Fired,1,74.37,26,High School,5,True,0.0,0.2183,-0.2894
+5756,High Cook's D | DFBETA PerfScore,Other,Shift Lead,part-time,4,Main Street,3.79,Competitive,25.0,2021-08-29,34.7,Promoted,6.2,Left,1,81.06,17,High School,2,True,0.0,0.2183,-0.2894
+5914,High Cook's D | DFBETA PerfScore,Other,Server,full-time,3,Downtown,3.91,Competitive,37.7,2025-02-19,7.2,Promoted,1.0,Left,1,80.24,28,Bachelor,6,True,0.0,0.2183,-0.2894
+5952,High Cook's D | DFBETA PerfScore,Other,Server,full-time,3,Downtown,3.91,Competitive,37.3,2023-04-20,7.8,Promoted,0.0,Left,1,82.08,17,Associate Degree,2,True,0.0001,0.2183,-0.2894
+5847,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,3,Downtown,3.91,Competitive,38.6,2021-09-22,10.5,Promoted,1.0,Left,1,95.22,18,Bachelor,2,True,0.0,0.2183,-0.2894
+5985,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,3,Downtown,3.91,Minimum,40.5,2024-06-05,10.8,Promoted,0.3,Left,1,89.69,27,Associate Degree,2,True,0.0002,0.2183,-0.2894
+5882,High Cook's D | DFBETA PerfScore,High Performer,Bartender,part-time,3,Downtown,3.91,Competitive,24.3,2023-11-03,15.1,Promoted,8.8,Left,1,88.99,18,Associate Degree,4,True,0.0,0.2183,-0.2894
+5496,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,3,Downtown,3.91,Competitive,39.3,2023-02-22,15.7,Promoted,6.0,Fired,1,95.31,21,Bachelor,3,True,0.0,0.2183,-0.2894
+5225,High Cook's D | DFBETA PerfScore,High Performer,Bartender,full-time,3,Downtown,3.91,Competitive,39.8,2023-11-21,16.4,Promoted,3.7,Left,1,95.52,21,Bachelor,3,True,0.0,0.2183,-0.2894
+6005,High Cook's D | DFBETA PerfScore,High Performer,Server,full-time,7,Metrotown,3.8,Competitive,37.8,2021-02-11,7.6,Promoted,1.0,Left,1,90.7,20,PhD,2,True,0.0,0.2183,-0.2894

@@ -1,0 +1,5 @@
+EmployeeID,Role,Branch#,Wage,AvgPerfScore,TenureMonths,IsHighPerformer,Churned,MonthsToPromotion,AvgWorkingHours/Week,HighestEducationLevel,YearsOfRelevantExperience
+5930,Shift Lead,3,Competitive,93.49,34.82260183968462,1,1,2.2339027595269383,26.5,Bachelor,2
+5946,Shift Lead,2,Minimum,73.51,35.183968462549274,0,1,15.801576872536137,27.6,Associate Degree,1
+5082,Bartender,6,Competitive,68.39,16.72141918528252,0,1,0.2628120893561104,23.3,Associate Degree,8
+5090,Shift Lead,5,Competitive,68.13,23.19316688567674,0,1,0.9855453350854139,22.4,Associate Degree,5
