@@ -909,11 +909,11 @@ function loadCSV(file) {
 
 async function boot() {
   try {
-    setLoader(10,'Loading employee.csv…');        var emp  = await loadCSV('employee.csv');
-    setLoader(28,'Loading applicant.csv…');        var appl = await loadCSV('applicant.csv');
-    setLoader(46,'Loading employee_changes.csv…'); var chg  = await loadCSV('employee_changes.csv');
-    setLoader(64,'Loading employee_performance.csv…'); var perf = await loadCSV('employee_performance.csv');
-    setLoader(82,'Loading branch.csv…');           var brch = await loadCSV('branch.csv');
+    setLoader(10,'Loading employee.csv…');        var emp  = await loadCSV('BOLT_Employees.csv');
+    setLoader(28,'Loading applicant.csv…');        var appl = await loadCSV('BOLT_Applicants.csv');
+    setLoader(46,'Loading employee_changes.csv…'); var chg  = await loadCSV('BOLT_EmployeeChanges.csv');
+    setLoader(64,'Loading employee_performance.csv…'); var perf = await loadCSV('BOLT_Performance.csv');
+    setLoader(82,'Loading branch.csv…');           var brch = await loadCSV('BOLT_Branch.csv');
     setLoader(93,'Processing data…');
     process(emp, appl, chg, perf, brch);
     setLoader(100,'Done!');
