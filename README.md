@@ -84,17 +84,17 @@ The notebooks are designed to be run in sequence:
 
 ## Analysis Coverage
 
-| Section | Topic                                                            | Guiding Question |
-| ------- | ---------------------------------------------------------------- | ---------------- |
-| 3       | Define "High Performer" (Bayesian-adjusted, top 25th percentile) | Q1a              |
-| 4       | Churn rate: high performers vs. rest of workforce                | Q1b              |
-| 5       | Tenure-at-exit: when in their career do HPs leave?               | Q2               |
-| 6       | Time-in-role before first promotion                              | Q3 & Q4          |
-| 7       | Does promotion improve retention?                                | Q5               |
-| 8       | Branch-level HP churn differences                                | Q6               |
-| 9       | Wage tier vs. performance alignment                              | Q7               |
-| 10      | Working hours & exit risk                                        | Q8               |
-| 11      | Full-time vs. part-time status & short-term intent               | Q9               |
+| Section | Topic                                                            | 
+| ------- | ---------------------------------------------------------------- |
+| 3       | Define "High Performer" (Bayesian-adjusted, top 25th percentile) |
+| 4       | Churn rate: high performers vs. rest of workforce                |
+| 5       | Tenure-at-exit: when in their career do HPs leave?               |
+| 6       | Time-in-role before first promotion                              |
+| 7       | Does promotion improve retention?                                |
+| 8       | Branch-level HP churn differences                                | 
+| 9       | Wage tier vs. performance alignment                              | 
+| 10      | Working hours & exit risk                                        | 
+| 11      | Full-time vs. part-time status & short-term intent               | 
 
 ---
 
