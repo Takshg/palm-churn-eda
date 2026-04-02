@@ -1,8 +1,10 @@
 # 🌴 palm-churn-eda
 
-**Alpha Boltlytics Consulting — EDA repository for diagnosing high-performer attrition at Palm Club Restaurants (Metro Vancouver, 7 branches).**
+******2nd Place — BOLT BootCamp 2026******
 
-> Produced for BOLT BootCamp 2026 by Taksh Girdhar, Tanay Mahendru, Muskan Bhatia & Fiona Gandhi.
+Alpha Boltlytics Consulting — EDA repository for diagnosing high-performer attrition at Palm Club Restaurants (Metro Vancouver, 7 branches).
+
+> Produced for BOLT BootCamp 2026 by Taksh Girdhar, Tanay Mahendru, Muskan Bhatia & Fiona Gandhi. 
 
 ---
 
