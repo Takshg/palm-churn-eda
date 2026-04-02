@@ -121,7 +121,7 @@ The Manager Performance Dashboard provides real-time visibility into HP status, 
 | Standardised promotion scorecard                   | No process to act on performance data |
 | Manager KPI tracker (HP retention rate, quarterly) | Lack of manager accountability        |
 
-🔗 **Live dashboard:** [https://takshg.github.io/palm-club-dashboard/](https://takshg.github.io/palm-club-dashboard/)
+🔗 **Live dashboard:** [https://takshg.github.io/palm-churn-eda/](https://takshg.github.io/palm-churn-eda/)
 
 See `Dashboard README.md` for local setup instructions.
 
