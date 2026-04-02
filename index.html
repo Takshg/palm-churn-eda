@@ -1,0 +1,1824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Palm Club — Manager Performance Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+:root{
+  --bg:#F7F5F0;--surface:#FFFFFF;--surface2:#F0EDE6;--border:#E2DDD5;
+  --text-primary:#1A1714;--text-secondary:#6B6560;--text-muted:#9E9890;
+  --accent:#C8A96E;--accent-dark:#A8893E;
+  --danger:#D4534A;--danger-light:#FDF0EF;
+  --success:#4A8C6F;--success-light:#EEF6F1;
+  --warning:#D4894A;--warning-light:#FDF4EE;
+  --sidebar-w:240px;--radius:12px;
+  --shadow:0 1px 3px rgba(26,23,20,0.08),0 4px 16px rgba(26,23,20,0.04);
+  --shadow-lg:0 8px 32px rgba(26,23,20,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;display:flex;}
+::-webkit-scrollbar{width:6px;height:6px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+#loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:16px;}
+.loader-logo{font-family:'Playfair Display',serif;font-size:32px;color:var(--accent);}
+.loader-sub{font-size:13px;color:var(--text-secondary);}
+.loader-bar-bg{width:240px;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.loader-bar-fill{height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width 0.4s ease;}
+.loader-status{font-size:11px;color:var(--text-muted);font-family:monospace;letter-spacing:0.04em;min-height:16px;}
+
+#error-screen{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:14px;padding:40px;text-align:center;}
+.error-title{font-family:'Playfair Display',serif;font-size:24px;color:var(--danger);}
+.error-msg{font-size:13px;color:var(--text-secondary);max-width:520px;line-height:1.65;}
+.error-code{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;font-family:monospace;font-size:12px;color:var(--text-secondary);max-width:520px;text-align:left;white-space:pre-wrap;}
+
+.sidebar{width:var(--sidebar-w);background:var(--text-primary);min-height:100vh;position:fixed;top:0;left:0;display:flex;flex-direction:column;z-index:100;}
+.sidebar-logo{padding:28px 24px 20px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.logo-mark{font-family:'Playfair Display',serif;font-size:20px;color:var(--accent);letter-spacing:0.04em;}
+.logo-sub{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.12em;text-transform:uppercase;margin-top:3px;}
+.sidebar-nav{padding:16px 12px;flex:1;}
+.nav-section{font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.3);padding:12px 12px 6px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:rgba(255,255,255,0.55);font-size:13.5px;font-weight:500;cursor:pointer;transition:all 0.15s;margin-bottom:2px;}
+.nav-item:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.85);}
+.nav-item.active{background:rgba(200,169,110,0.18);color:var(--accent);}
+.nav-icon{font-size:15px;width:20px;text-align:center;}
+.branch-selector{padding:16px 12px;border-top:1px solid rgba(255,255,255,0.08);}
+.branch-label{font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.3);padding:0 12px 8px;}
+.branch-btn{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:7px;color:rgba(255,255,255,0.55);font-size:12.5px;cursor:pointer;transition:all 0.15s;margin-bottom:2px;}
+.branch-btn:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.8);}
+.branch-btn.active{background:rgba(200,169,110,0.15);color:var(--accent);}
+.branch-dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
+.sidebar-footer{padding:16px 24px;border-top:1px solid rgba(255,255,255,0.08);font-size:11px;color:rgba(255,255,255,0.25);}
+
+.main{margin-left:var(--sidebar-w);flex:1;padding:32px 36px;min-height:100vh;}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;}
+.page-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;line-height:1.2;}
+.page-sub{font-size:13px;color:var(--text-secondary);margin-top:4px;}
+
+.page-footer{
+  margin-top:40px;
+  padding:18px 0 8px;
+  border-top:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size:11.5px;
+  color:var(--text-muted);
+}
+.page-footer-author{
+  font-weight:600;
+  color:var(--accent-dark);
+  letter-spacing:0.02em;
+}
+.page-footer-right{
+  font-size:11px;
+  color:var(--text-muted);
+  letter-spacing:0.04em;
+}
+.header-controls{display:flex;gap:10px;align-items:center;}
+.filter-pill{display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:30px;font-size:12.5px;font-weight:500;color:var(--text-secondary);cursor:pointer;transition:all 0.15s;}
+.filter-pill:hover{border-color:var(--accent);color:var(--accent);}
+.filter-pill.active{background:var(--accent);color:white;border-color:var(--accent);}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.kpi-card{background:var(--surface);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow);border:1px solid var(--border);position:relative;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s;}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.kpi-card.danger::before{background:var(--danger);}
+.kpi-card.success::before{background:var(--success);}
+.kpi-card.warning::before{background:var(--warning);}
+.kpi-card.gold::before{background:var(--accent);}
+.kpi-label{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;}
+.kpi-value{font-family:'Playfair Display',serif;font-size:34px;font-weight:700;line-height:1;margin-bottom:6px;}
+.kpi-card.danger .kpi-value{color:var(--danger);}
+.kpi-card.success .kpi-value{color:var(--success);}
+.kpi-card.warning .kpi-value{color:var(--warning);}
+.kpi-card.gold .kpi-value{color:var(--accent-dark);}
+.kpi-delta{font-size:12px;color:var(--text-secondary);display:flex;align-items:center;gap:4px;}
+.delta-badge{display:inline-flex;align-items:center;gap:2px;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:600;}
+.delta-badge.up{background:var(--danger-light);color:var(--danger);}
+.delta-badge.down{background:var(--success-light);color:var(--success);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;}
+.grid-3{display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-bottom:24px;}
+
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;}
+.card-header{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:14px;font-weight:700;color:var(--text-primary);letter-spacing:-0.01em;}
+.card-subtitle{font-size:11.5px;color:var(--text-muted);margin-top:2px;}
+.card-body{padding:20px 22px;}
+.status-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+.status-pill.red{background:var(--danger-light);color:var(--danger);}
+.status-pill.green{background:var(--success-light);color:var(--success);}
+.status-pill.orange{background:var(--warning-light);color:var(--warning);}
+
+.risk-banner{background:linear-gradient(135deg,#FDF0EF,#FFF9F5);border:1px solid rgba(212,83,74,0.2);border-radius:var(--radius);padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.risk-banner-icon{font-size:20px;}
+.risk-banner-title{font-size:13.5px;font-weight:700;color:var(--danger);}
+.risk-banner-sub{font-size:12px;color:var(--text-secondary);margin-top:2px;}
+
+.insight-list{display:flex;flex-direction:column;gap:10px;}
+.insight-item{display:flex;gap:12px;padding:13px 16px;border-radius:9px;border:1px solid var(--border);align-items:flex-start;transition:border-color 0.15s;}
+.insight-item:hover{border-color:var(--accent);}
+.insight-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.insight-title{font-size:13px;font-weight:600;margin-bottom:3px;}
+.insight-desc{font-size:12px;color:var(--text-secondary);line-height:1.4;}
+
+.emp-controls{padding:14px 22px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--bg);}
+.search-box{flex:1;min-width:200px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;background:var(--surface);color:var(--text-primary);outline:none;transition:border-color 0.15s;}
+.search-box:focus{border-color:var(--accent);}
+.select-filter{padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12.5px;background:var(--surface);color:var(--text-secondary);cursor:pointer;outline:none;}
+
+.emp-table{width:100%;border-collapse:collapse;}
+.emp-table th{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);background:var(--bg);white-space:nowrap;}
+.emp-table td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.emp-table tr:last-child td{border-bottom:none;}
+.emp-table tbody tr{cursor:pointer;}
+.emp-table tbody tr:hover td{background:var(--surface2);}
+.emp-avatar{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;}
+.emp-name-cell{display:flex;align-items:center;gap:9px;}
+.emp-name{font-weight:600;font-size:13px;}
+.emp-role-sub{font-size:11px;color:var(--text-muted);}
+.hp-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;font-size:10.5px;font-weight:700;}
+.hp-badge.hp{background:rgba(200,169,110,0.15);color:var(--accent-dark);}
+.hp-badge.nhp{background:rgba(139,167,200,0.15);color:#4A6F8C;}
+.score-bar-wrap{display:flex;align-items:center;gap:8px;}
+.score-bar-bg{width:56px;height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
+.score-bar-fill{height:100%;border-radius:3px;}
+
+/* Performance sparkline */
+.sparkline-wrap{display:flex;align-items:center;gap:7px;}
+.sparkline-canvas{display:block;}
+.sparkline-val{font-weight:600;font-size:12px;min-width:24px;}
+.promote-btn{padding:5px 11px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;font-family:'DM Sans',sans-serif;}
+.promote-btn.flag{background:rgba(200,169,110,0.12);color:var(--accent-dark);border:1px solid rgba(200,169,110,0.3);}
+.promote-btn.flag:hover{background:var(--accent);color:white;border-color:var(--accent);}
+.promote-btn.flagged{background:var(--accent);color:white;border:1px solid var(--accent);}
+
+.branch-table{width:100%;border-collapse:collapse;}
+.branch-table th{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);background:var(--bg);}
+.branch-table td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.branch-table tr:last-child td{border-bottom:none;}
+.branch-table tr:hover td{background:var(--surface2);}
+.churn-bar-wrap{display:flex;align-items:center;gap:8px;}
+.churn-bar-bg{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.churn-bar-fill{height:100%;border-radius:3px;}
+.churn-pct{font-size:12px;font-weight:600;min-width:36px;}
+
+.tabs{display:flex;gap:2px;padding:4px;background:var(--surface2);border-radius:8px;margin-bottom:20px;width:fit-content;}
+.tab{padding:7px 16px;border-radius:6px;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--text-secondary);transition:all 0.15s;}
+.tab.active{background:var(--surface);color:var(--text-primary);box-shadow:0 1px 3px rgba(0,0,0,0.08);}
+.tab:hover:not(.active){color:var(--text-primary);}
+
+.criteria-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.criterion{background:var(--surface2);border-radius:9px;padding:14px 16px;}
+.crit-icon{font-size:22px;margin-bottom:6px;}
+.crit-title{font-size:12px;font-weight:700;margin-bottom:4px;}
+.crit-val{font-size:13px;color:var(--text-secondary);}
+
+.table-footer{display:flex;align-items:center;justify-content:space-between;padding:12px 22px;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted);background:var(--bg);}
+.pagination{display:flex;gap:4px;}
+.page-btn{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);transition:all 0.15s;}
+.page-btn:hover{border-color:var(--accent);color:var(--accent);}
+.page-btn.active{background:var(--accent);color:white;border-color:var(--accent);}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(26,23,20,0.5);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--surface);border-radius:16px;width:500px;max-width:95vw;box-shadow:var(--shadow-lg);overflow:hidden;transform:translateY(12px);transition:transform 0.2s;}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-header{padding:22px 24px 18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;}
+.modal-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;}
+.modal-close{font-size:20px;cursor:pointer;color:var(--text-muted);line-height:1;}
+.modal-close:hover{color:var(--text-primary);}
+.modal-body{padding:22px 24px;}
+.modal-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.modal-stat{background:var(--surface2);border-radius:9px;padding:12px 14px;}
+.modal-stat-label{font-size:10.5px;color:var(--text-muted);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:5px;}
+.modal-stat-val{font-size:18px;font-weight:700;font-family:'Playfair Display',serif;}
+.modal-rec{background:rgba(200,169,110,0.08);border:1px solid rgba(200,169,110,0.25);border-radius:9px;padding:13px 15px;}
+.modal-rec-title{font-size:12px;font-weight:700;color:var(--accent-dark);margin-bottom:6px;letter-spacing:0.04em;text-transform:uppercase;}
+.modal-rec-text{font-size:13px;color:var(--text-secondary);line-height:1.5;}
+
+.view{display:none;}.view.active{display:block;}
+.mb24{margin-bottom:24px;}
+
+/* ── TRAINING PAGE ── */
+.training-hero{background:linear-gradient(135deg,var(--text-primary) 0%,#2C2520 100%);border-radius:var(--radius);padding:32px 36px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+.training-hero-text{}
+.training-hero-title{font-family:'Playfair Display',serif;font-size:24px;color:white;margin-bottom:6px;}
+.training-hero-sub{font-size:13px;color:rgba(255,255,255,0.55);line-height:1.5;max-width:480px;}
+.training-hero-badge{background:rgba(200,169,110,0.2);border:1px solid rgba(200,169,110,0.4);border-radius:30px;padding:6px 16px;font-size:12px;font-weight:600;color:var(--accent);white-space:nowrap;}
+.training-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:20px;}
+.training-stat{background:rgba(255,255,255,0.07);border-radius:8px;padding:12px 16px;}
+.training-stat-val{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--accent);}
+.training-stat-label{font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px;}
+
+.training-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;}
+.training-module{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+.module-header{padding:16px 20px 12px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.module-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.module-title{font-size:14px;font-weight:700;margin-bottom:2px;}
+.module-sub{font-size:11.5px;color:var(--text-muted);}
+.module-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;white-space:nowrap;letter-spacing:0.04em;}
+.module-badge.core{background:rgba(200,169,110,0.15);color:var(--accent-dark);}
+.module-badge.scenario{background:var(--success-light);color:var(--success);}
+.module-badge.ref{background:rgba(139,167,200,0.15);color:#4A6F8C;}
+.module-body{padding:16px 20px;}
+
+/* Drag & drop scenario board */
+.scenario-board{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.scenario-col-title{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;padding:0 2px;}
+.drop-zone{min-height:160px;background:var(--surface2);border:2px dashed var(--border);border-radius:10px;padding:10px;transition:all 0.2s;display:flex;flex-direction:column;gap:8px;}
+.drop-zone.drag-over{border-color:var(--accent);background:rgba(200,169,110,0.07);}
+.drop-zone.correct-zone{border-color:var(--success);background:var(--success-light);}
+.drop-zone.wrong-zone{border-color:var(--danger);background:var(--danger-light);}
+.scenario-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.4;cursor:grab;user-select:none;transition:all 0.15s;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+.scenario-card:hover{border-color:var(--accent);box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+.scenario-card:active{cursor:grabbing;opacity:0.8;}
+.scenario-card.dragging{opacity:0.4;}
+.scenario-card .card-label{font-size:9.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px;}
+.scenario-card .card-label.red{color:var(--danger);}
+.scenario-card .card-label.amber{color:var(--warning);}
+.scenario-card .card-label.green{color:var(--success);}
+.scenario-card .card-text{color:var(--text-secondary);}
+.scenario-card.placed-correct{border-color:var(--success);background:var(--success-light);}
+.scenario-card.placed-wrong{border-color:var(--danger);background:var(--danger-light);}
+
+.scenario-bank{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:var(--bg);border-radius:9px;border:1px solid var(--border);margin-bottom:14px;min-height:60px;}
+.scenario-bank.drag-over{border-color:var(--accent);background:rgba(200,169,110,0.05);}
+
+.training-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;}
+.training-btn.primary{background:var(--accent);color:white;}
+.training-btn.primary:hover{background:var(--accent-dark);}
+.training-btn.ghost{background:var(--surface2);color:var(--text-secondary);border:1px solid var(--border);}
+.training-btn.ghost:hover{border-color:var(--accent);color:var(--accent);}
+.scenario-result{display:none;padding:12px 14px;border-radius:8px;font-size:13px;font-weight:500;margin-top:12px;line-height:1.5;}
+.scenario-result.show{display:block;}
+.scenario-result.pass{background:var(--success-light);color:var(--success);border:1px solid rgba(74,140,111,0.25);}
+.scenario-result.fail{background:var(--danger-light);color:var(--danger);border:1px solid rgba(212,83,74,0.2);}
+
+/* Checklist */
+.checklist-item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:8px;border:1px solid var(--border);margin-bottom:8px;cursor:pointer;transition:all 0.15s;}
+.checklist-item:hover{border-color:var(--accent);}
+.checklist-item.checked{background:var(--success-light);border-color:rgba(74,140,111,0.3);}
+.check-box{width:20px;height:20px;border-radius:6px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:1px;transition:all 0.15s;}
+.checklist-item.checked .check-box{background:var(--success);border-color:var(--success);color:white;}
+.check-title{font-size:13px;font-weight:600;margin-bottom:2px;}
+.check-desc{font-size:11.5px;color:var(--text-secondary);}
+.checklist-item.checked .check-title{color:var(--success);}
+.progress-bar-wrap{margin-bottom:16px;}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--text-secondary);margin-bottom:6px;}
+.progress-bg{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--success);border-radius:3px;transition:width 0.4s ease;}
+
+/* Tip cards */
+.tip-card{background:var(--surface2);border-radius:9px;padding:14px 16px;margin-bottom:10px;border-left:3px solid var(--accent);}
+.tip-card.danger-tip{border-left-color:var(--danger);}
+.tip-card.success-tip{border-left-color:var(--success);}
+.tip-title{font-size:12.5px;font-weight:700;margin-bottom:4px;}
+.tip-body{font-size:12px;color:var(--text-secondary);line-height:1.5;}
+
+/* Quiz */
+.quiz-q{font-size:14px;font-weight:600;margin-bottom:14px;line-height:1.5;}
+.quiz-option{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-radius:8px;border:1px solid var(--border);margin-bottom:8px;cursor:pointer;transition:all 0.15s;font-size:13px;}
+.quiz-option:hover{border-color:var(--accent);}
+.quiz-option.selected{border-color:var(--accent);background:rgba(200,169,110,0.08);}
+.quiz-option.correct{border-color:var(--success);background:var(--success-light);color:var(--success);font-weight:600;}
+.quiz-option.incorrect{border-color:var(--danger);background:var(--danger-light);color:var(--danger);}
+.quiz-letter{width:22px;height:22px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;color:var(--text-secondary);}
+.quiz-option.correct .quiz-letter{background:var(--success);color:white;}
+.quiz-option.incorrect .quiz-letter{background:var(--danger);color:white;}
+.quiz-feedback{font-size:12.5px;padding:10px 14px;border-radius:7px;margin-top:10px;display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-nav{display:flex;align-items:center;justify-content:space-between;margin-top:16px;}
+.quiz-counter{font-size:12px;color:var(--text-muted);}
+/* ── MOBILE NAV TOGGLE ── */
+.mob-menu-btn{
+  display:none;
+  position:fixed;top:14px;left:14px;z-index:300;
+  width:40px;height:40px;border-radius:10px;
+  background:var(--text-primary);border:none;cursor:pointer;
+  flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.3);
+}
+.mob-menu-btn span{display:block;width:18px;height:2px;background:var(--accent);border-radius:2px;transition:all 0.2s;}
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99;}
+.mob-overlay.open{display:block;}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+
+  /* Show hamburger, hide sidebar by default */
+  .mob-menu-btn{display:flex;}
+  .sidebar{
+    transform:translateX(-100%);
+    transition:transform 0.25s ease;
+    z-index:200;
+    width:260px;
+    overflow-y:auto;
+  }
+  .sidebar.open{transform:translateX(0);}
+
+  /* Main fills full width */
+  .main{
+    margin-left:0;
+    padding:72px 16px 24px;
+  }
+
+  /* Page header stacks */
+  .page-header{flex-direction:column;gap:12px;margin-bottom:20px;}
+  .page-title{font-size:22px;}
+  .header-controls{flex-wrap:wrap;gap:6px;}
+  .filter-pill{padding:6px 12px;font-size:12px;}
+
+  /* KPI grid — 2 columns on phone */
+  .kpi-grid{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+  .kpi-value{font-size:26px;}
+  .kpi-card{padding:14px 16px;}
+
+  /* Charts — single column */
+  .grid-2,.grid-3{grid-template-columns:1fr;gap:14px;margin-bottom:16px;}
+
+  /* Risk banner wraps */
+  .risk-banner{flex-wrap:wrap;gap:8px;}
+  .risk-banner .filter-pill{margin-left:0!important;width:100%;}
+
+  /* Cards */
+  .card-header{flex-wrap:wrap;gap:8px;padding:14px 16px 10px;}
+  .card-body{padding:14px 16px;}
+
+  /* Tabs scroll horizontally */
+  .tabs{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .tab{white-space:nowrap;padding:7px 14px;font-size:12px;}
+
+  /* Employee controls stack */
+  .emp-controls{gap:6px;}
+  .search-box{min-width:100%;font-size:13px;}
+  .select-filter{flex:1;font-size:12px;}
+
+  /* Tables — horizontal scroll */
+  .emp-table th,.emp-table td{padding:8px 10px;font-size:12px;}
+  .branch-table th,.branch-table td{padding:9px 10px;font-size:12px;}
+
+  /* Criteria grid — 2 cols */
+  .criteria-grid{grid-template-columns:1fr 1fr;gap:10px;}
+
+  /* Training hero */
+  .training-hero{flex-direction:column;padding:20px;gap:14px;}
+  .training-hero-badge{align-self:flex-start;}
+  .training-stat-row{grid-template-columns:1fr 1fr 1fr;}
+  .training-grid{grid-template-columns:1fr;gap:14px;}
+
+  /* Scenario board — single column on phone */
+  .scenario-board{grid-template-columns:1fr;gap:10px;}
+
+  /* Modal full-screen on phone */
+  .modal{
+    width:100%;
+    max-width:100%;
+    border-radius:16px 16px 0 0;
+    position:fixed;
+    bottom:0;left:0;right:0;
+    max-height:90vh;
+    overflow-y:auto;
+    transform:translateY(100%);
+  }
+  .modal-overlay.open .modal{transform:translateY(0);}
+  .modal-overlay{align-items:flex-end;}
+
+  /* Footer stacks */
+  .page-footer{flex-direction:column;align-items:flex-start;gap:4px;}
+
+  /* Branch kpi grid 2 cols */
+  #branch-kpis{grid-template-columns:1fr 1fr!important;}
+
+  /* Hide sparkline trend col on small screens to save space */
+  .emp-table th:nth-child(6),
+  .emp-table td:nth-child(6){display:none;}
+
+  /* Insight list icons smaller */
+  .insight-icon{width:28px;height:28px;font-size:14px;}
+}
+
+@media (max-width: 480px) {
+  .kpi-grid{grid-template-columns:1fr 1fr;}
+  .kpi-value{font-size:22px;}
+  .criteria-grid{grid-template-columns:1fr;}
+  .training-stat-row{grid-template-columns:1fr 1fr;}
+  .modal-stat-grid{grid-template-columns:1fr 1fr;}
+  .tabs .tab{font-size:11px;padding:6px 11px;}
+  #branch-kpis{grid-template-columns:1fr 1fr!important;}
+}
+
+</style>
+</head>
+<body>
+
+<!-- Mobile nav toggle -->
+<button class="mob-menu-btn" id="mobMenuBtn" onclick="toggleMobNav()" aria-label="Open menu">
+  <span></span><span></span><span></span>
+</button>
+<div class="mob-overlay" id="mobOverlay" onclick="closeMobNav()"></div>
+
+<div id="loading-screen">
+  <div class="loader-logo">Palm Club</div>
+  <div class="loader-sub">Loading employee data…</div>
+  <div class="loader-bar-bg"><div class="loader-bar-fill" id="loader-bar"></div></div>
+  <div class="loader-status" id="loader-status">Initializing…</div>
+</div>
+
+<div id="error-screen">
+  <div style="font-size:40px">⚠</div>
+  <div class="error-title">Could not load CSV files</div>
+  <div class="error-msg">The dashboard needs your CSV files in the <code>data/</code> folder and must be served via a local server — not opened directly as a file.<br><br>Run: <strong>python3 -m http.server 8080</strong> then open http://localhost:8080</div>
+  <div class="error-code" id="error-detail"></div>
+</div>
+
+<aside class="sidebar" id="app-sidebar" style="display:none">
+  <div class="sidebar-logo">
+    <div class="logo-mark">Palm Club</div>
+    <div class="logo-sub">Manager Dashboard</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Views</div>
+    <div class="nav-item active" onclick="switchView('overview',this)"><span class="nav-icon">◈</span> Overview</div>
+    <div class="nav-item" onclick="switchView('employees',this)"><span class="nav-icon">◎</span> Employees</div>
+    <div class="nav-item" onclick="switchView('branches',this)"><span class="nav-icon">⬡</span> Branches</div>
+    <div class="nav-item" onclick="switchView('promotions',this)"><span class="nav-icon">▲</span> Promotions</div>
+    <div class="nav-item" onclick="switchView('training',this)"><span class="nav-icon">★</span> Manager Training</div>
+  </nav>
+  <div class="branch-selector">
+    <div class="branch-label">Branch Filter</div>
+    <div class="branch-btn active" onclick="filterBranch('',this)"><span>All Branches</span><span class="branch-dot"></span></div>
+    <div id="branch-btn-list"></div>
+  </div>
+  <div class="sidebar-footer">
+    <div style="color:rgba(255,255,255,0.45);margin-bottom:4px">As of March 2026</div>
+    <div style="color:rgba(200,169,110,0.7);font-size:10px;letter-spacing:0.08em">Created by Taksh Girdhar</div>
+  </div>
+</aside>
+
+<main class="main" id="app-main" style="display:none">
+
+  <div class="view active" id="view-overview">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Performance Overview</div>
+        <div class="page-sub">High performer retention · Branch health · Churn risk signals</div>
+      </div>
+      <div class="header-controls">
+        <div class="filter-pill active" id="pill-all" onclick="setPill('all',this)">⬤ All</div>
+        <div class="filter-pill" id="pill-ft" onclick="setPill('Full-time',this)">Full-time</div>
+        <div class="filter-pill" id="pill-pt" onclick="setPill('Part-time',this)">Part-time</div>
+      </div>
+    </div>
+    <div class="risk-banner">
+      <div class="risk-banner-icon">⚠</div>
+      <div>
+        <div class="risk-banner-title" id="banner-title">Loading…</div>
+        <div class="risk-banner-sub" id="banner-sub"></div>
+      </div>
+      <div class="filter-pill" style="margin-left:auto" onclick="switchView('employees',document.querySelectorAll('.nav-item')[1])">View employees →</div>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card danger"><div class="kpi-label">HP Churn Rate</div><div class="kpi-value" id="k-hpchurn">—</div><div class="kpi-delta" id="k-hpchurn-d"></div></div>
+      <div class="kpi-card warning"><div class="kpi-label">Avg Months to Promotion</div><div class="kpi-value" id="k-promoavg">—</div><div class="kpi-delta" id="k-promoavg-d"></div></div>
+      <div class="kpi-card gold"><div class="kpi-label">Active High Performers</div><div class="kpi-value" id="k-hpcount">—</div><div class="kpi-delta" id="k-hpcount-d"></div></div>
+      <div class="kpi-card success"><div class="kpi-label">Promoted &amp; Retained</div><div class="kpi-value" id="k-promored">—</div><div class="kpi-delta" id="k-promored-d"></div></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">Churn Rate by Performance Tier</div><div class="card-subtitle">High Performers vs. Others</div></div><span class="status-pill red" style="font-size:10.5px;padding:3px 9px;font-weight:600">Q1</span></div>
+        <div class="card-body"><div style="height:220px;position:relative"><canvas id="cChurnTier"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">When Do HPs Exit? (Tenure at Exit)</div><div class="card-subtitle">Critical window: 0–12 months accounts for majority of exits</div></div><span class="status-pill orange" style="font-size:10.5px;padding:3px 9px;font-weight:600">Q2</span></div>
+        <div class="card-body"><div style="height:220px;position:relative"><canvas id="cTenureExit"></canvas></div></div>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-header"><div><div class="card-title">HP Churn Rate by Branch</div><div class="card-subtitle">Ranked by exit rate</div></div></div>
+        <div class="card-body"><div style="height:220px;position:relative"><canvas id="cBranchChurn"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Key Findings</div><div class="card-subtitle">Data-backed action items</div></div>
+        <div class="card-body" style="padding:14px 18px">
+          <div class="insight-list">
+            <div class="insight-item"><div class="insight-icon" style="background:var(--danger-light)">🎯</div><div><div class="insight-title">Promotion gap too narrow</div><div class="insight-desc" id="ins-1">HP median promo time is only marginally faster — top talent is not differentiated.</div></div></div>
+            <div class="insight-item"><div class="insight-icon" style="background:var(--warning-light)">⏱</div><div><div class="insight-title">Part-timers exit early</div><div class="insight-desc">No visible promotion path. Most part-time exits occur within the first year.</div></div></div>
+            <div class="insight-item"><div class="insight-icon" style="background:var(--success-light)">💡</div><div><div class="insight-title">Promotion works</div><div class="insight-desc" id="ins-2">Promoted HPs retain at a significantly higher rate. ROI on promotion is clear.</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card mb24">
+      <div class="card-header"><div><div class="card-title">Wage Tier vs. Churn — High Performers</div><div class="card-subtitle">Compensation alignment with performance (Q7)</div></div></div>
+      <div class="card-body"><div style="height:180px;position:relative"><canvas id="cWageChurn"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="view" id="view-employees">
+    <div class="page-header"><div><div class="page-title">Employee Tracker</div><div class="page-sub">Performance · tenure risk · working hours · promotion readiness</div></div></div>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab(this,'all')">All Employees</div>
+      <div class="tab" onclick="switchTab(this,'hp')">High Performers</div>
+      <div class="tab" onclick="switchTab(this,'atrisk')">At Risk</div>
+      <div class="tab" onclick="switchTab(this,'flagged')">Flagged</div>
+    </div>
+    <div class="card">
+      <div class="emp-controls">
+        <input class="search-box" id="empSearch" placeholder="Search by name or role…" oninput="doSearch(this.value)">
+        <select class="select-filter" id="selBranch" onchange="applyFilters()"><option value="">All Branches</option></select>
+        <select class="select-filter" id="selPos" onchange="applyFilters()"><option value="">All Types</option></select>
+        <select class="select-filter" id="selTier" onchange="applyFilters()"><option value="">HP &amp; NHP</option><option value="HP">High Performers</option><option value="NHP">Non-HP</option></select>
+      </div>
+      <div style="overflow-x:auto">
+        <div style="display:flex;align-items:center;gap:16px;padding:7px 14px;font-size:11px;color:var(--text-muted);border-bottom:1px solid var(--border);background:var(--bg);flex-wrap:wrap;">
+          <span style="font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-secondary)">Trend:</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:18px;height:2px;background:#4A8C6F;display:inline-block;border-radius:1px"></span>Consistent HP</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:18px;height:2px;background:#D4894A;display:inline-block;border-radius:1px"></span>Mixed</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:18px;height:2px;background:#D4534A;display:inline-block;border-radius:1px"></span>Below threshold</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:14px;border-top:1px dashed rgba(200,169,110,0.8);display:inline-block"></span>HP threshold (75)</span>
+        </div>
+        <table class="emp-table">
+          <thead><tr><th>Employee</th><th>Branch</th><th>Position</th><th>Tier</th><th>Avg Score</th><th>Trend</th><th>Tenure</th><th>Mo. w/o Promo</th><th>Hrs/Wk</th><th>Wage</th><th>Risk</th><th>Action</th></tr></thead>
+          <tbody id="empBody"></tbody>
+        </table>
+      </div>
+      <div class="table-footer"><span id="empCount">—</span><div class="pagination" id="empPager"></div></div>
+    </div>
+  </div>
+
+  <div class="view" id="view-branches">
+    <div class="page-header"><div><div class="page-title">Branch Health</div><div class="page-sub">Churn rates · performance · Google review rating correlation</div></div></div>
+    <div class="kpi-grid" id="branch-kpis"></div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><div class="card-title">HP Churn Rate vs. Avg Google Stars</div><div class="card-subtitle">High churn correlates with lower customer rating</div></div>
+        <div class="card-body"><div style="height:260px;position:relative"><canvas id="cBranchDetail"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Promotion Rate by Branch</div><div class="card-subtitle">% of HPs promoted within 12 months</div></div>
+        <div class="card-body"><div style="height:260px;position:relative"><canvas id="cBranchPromo"></canvas></div></div>
+      </div>
+    </div>
+    <div class="card mb24">
+      <div class="card-header"><div class="card-title">Branch Comparison Table</div></div>
+      <table class="branch-table"><thead><tr><th>Branch</th><th>Total Employees</th><th>% High Performers</th><th>HP Churn Rate</th><th>Avg Score</th><th>Avg Stars</th><th>Status</th></tr></thead>
+      <tbody id="branchBody"></tbody></table>
+    </div>
+  </div>
+
+  <div class="view" id="view-promotions">
+    <div class="page-header"><div><div class="page-title">Promotion Pipeline</div><div class="page-sub">Standardized criteria · overdue reviews · retention impact</div></div></div>
+    <div class="risk-banner" style="background:linear-gradient(135deg,#EEF6F1,#F5FCF8);border-color:rgba(74,140,111,0.25)">
+      <div class="risk-banner-icon">💡</div>
+      <div>
+        <div class="risk-banner-title" style="color:var(--success)" id="promo-banner">Loading…</div>
+        <div class="risk-banner-sub">Employees below are HP-eligible and past the 9-month review window.</div>
+      </div>
+    </div>
+    <div class="card mb24">
+      <div class="card-header"><div class="card-title">Standardized Promotion Framework</div><div class="card-subtitle">Consistent criteria — eliminates manager ambiguity across all branches</div></div>
+      <div class="card-body">
+        <div class="criteria-grid">
+          <div class="criterion"><div class="crit-icon">📊</div><div class="crit-title">Performance Score</div><div class="crit-val">Avg ≥ 75 over last 3 reviews</div></div>
+          <div class="criterion"><div class="crit-icon">📅</div><div class="crit-title">Minimum Tenure</div><div class="crit-val">≥ 6 months in current role</div></div>
+          <div class="criterion"><div class="crit-icon">⏰</div><div class="crit-title">Mandatory Review</div><div class="crit-val">Triggered at 9 months if no promotion yet</div></div>
+          <div class="criterion"><div class="crit-icon">🔀</div><div class="crit-title">Part-time Eligible</div><div class="crit-val">HP part-timers eligible at 10 months</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Median Months to Promotion: HP vs. Non-HP</div><div class="card-subtitle">Gap is only 0.2 months — green dot shows where HP target should be (Q4)</div></div>
+        <div class="card-body"><div style="height:220px;position:relative"><canvas id="cPromoTime"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Promotion → Retention (High Performers Only)</div><div class="card-subtitle">Q5 — the business case for acting now</div></div>
+        <div class="card-body"><div style="height:220px;position:relative"><canvas id="cPromoRet"></canvas></div></div>
+      </div>
+    </div>
+    <div class="card mb24">
+      <div class="card-header">
+        <div><div class="card-title">Employees Overdue for Promotion Review</div><div class="card-subtitle">Active HPs past 9-month mark with no promotion</div></div>
+        <span class="status-pill red" id="overdue-badge">Loading…</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="emp-table"><thead><tr><th>Employee</th><th>Branch</th><th>Role</th><th>Avg Score</th><th>Mo. w/o Promo</th><th>Overdue By</th><th>Action</th></tr></thead>
+        <tbody id="promoBody"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRAINING VIEW -->
+  <div class="view" id="view-training">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Manager Training</div>
+        <div class="page-sub">Using promotion as a retention tool · Interactive exercises</div>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <div class="training-hero">
+      <div class="training-hero-text">
+        <div class="training-hero-title">Promotion is your most powerful retention lever.</div>
+        <div class="training-hero-sub">Our data shows promoted high performers retain at 27pp higher rates than those never promoted. This module teaches you to identify, time, and execute promotions before your best people leave.</div>
+        <div class="training-stat-row">
+          <div class="training-stat"><div class="training-stat-val">27pp</div><div class="training-stat-label">Retention lift from promotion</div></div>
+          <div class="training-stat"><div class="training-stat-val">9 mo</div><div class="training-stat-label">Mandatory review trigger</div></div>
+          <div class="training-stat"><div class="training-stat-val">6–14 mo</div><div class="training-stat-label">Peak exit window for HPs</div></div>
+        </div>
+      </div>
+      <div class="training-hero-badge">3 Modules · ~15 min</div>
+    </div>
+
+    <div class="training-grid">
+
+      <!-- MODULE 1: Drag & Drop Scenario Sort -->
+      <div class="training-module" style="grid-column:1/-1">
+        <div class="module-header">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div class="module-icon" style="background:rgba(200,169,110,0.15)">🗂️</div>
+            <div>
+              <div class="module-title">Module 1 — Scenario Sort</div>
+              <div class="module-sub">Drag each employee scenario into the correct action column. When should you act immediately, schedule a review, or continue monitoring?</div>
+            </div>
+          </div>
+          <span class="module-badge core">Core Skill</span>
+        </div>
+        <div class="module-body">
+          <!-- Card bank -->
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Unplaced Scenarios — drag each card to a column below</div>
+          <div class="scenario-bank" id="scenario-bank" ondragover="onDragOver(event)" ondrop="onDrop(event,'bank')" ondragleave="onDragLeave(event)">
+            <div class="scenario-card" draggable="true" data-id="s1" data-correct="act" ondragstart="onDragStart(event)" ondragend="onDragEnd(event)">
+              <div class="card-label red">High Performer</div>
+              <div class="card-text">Score 88, 11 months in role, no promotion, part-time, on minimum wage. Has mentioned wanting more responsibility.</div>
+            </div>
+            <div class="scenario-card" draggable="true" data-id="s2" data-correct="monitor" ondragstart="onDragStart(event)" ondragend="onDragEnd(event)">
+              <div class="card-label green">High Performer</div>
+              <div class="card-text">Score 82, 4 months in role, recently promoted to Server. Engaged, no signs of exit risk.</div>
+            </div>
+            <div class="scenario-card" draggable="true" data-id="s3" data-correct="act" ondragstart="onDragStart(event)" ondragend="onDragEnd(event)">
+              <div class="card-label red">High Performer</div>
+              <div class="card-text">Score 91, 14 months in role, never promoted, full-time. Has received a competing offer from another restaurant.</div>
+            </div>
+            <div class="scenario-card" draggable="true" data-id="s4" data-correct="schedule" ondragstart="onDragStart(event)" ondragend="onDragEnd(event)">
+              <div class="card-label amber">High Performer</div>
+              <div class="card-text">Score 79, 7 months in role, no promotion yet. Performing well but hasn't flagged concerns.</div>
+            </div>
+            <div class="scenario-card" draggable="true" data-id="s5" data-correct="monitor" ondragstart="onDragStart(event)" ondragend="onDragEnd(event)">
+              <div class="card-label amber">Non-HP</div>
+              <div class="card-text">Score 68, 9 months in role. Performance inconsistent — strong some weeks, weak others. No promotion pressure.</div>
+            </div>
+            <div class="scenario-card" draggable="true" data-id="s6" data-correct="schedule" ondragstart="onDragStart(event)" ondragend="onDragEnd(event)">
+              <div class="card-label amber">High Performer</div>
+              <div class="card-text">Score 84, 8 months in role, part-time. Coming up on the 10-month part-time eligibility mark with no review booked.</div>
+            </div>
+          </div>
+
+          <!-- Drop columns -->
+          <div class="scenario-board">
+            <div>
+              <div class="scenario-col-title" style="color:var(--danger)">🚨 Act Now</div>
+              <div class="drop-zone" id="zone-act" ondragover="onDragOver(event)" ondrop="onDrop(event,'act')" ondragleave="onDragLeave(event)">
+                <div style="font-size:11px;color:var(--text-muted);text-align:center;padding:20px 0;pointer-events:none">HP past review window or has competing offer</div>
+              </div>
+            </div>
+            <div>
+              <div class="scenario-col-title" style="color:var(--warning)">📅 Schedule Review</div>
+              <div class="drop-zone" id="zone-schedule" ondragover="onDragOver(event)" ondrop="onDrop(event,'schedule')" ondragleave="onDragLeave(event)">
+                <div style="font-size:11px;color:var(--text-muted);text-align:center;padding:20px 0;pointer-events:none">HP approaching eligibility window</div>
+              </div>
+            </div>
+            <div>
+              <div class="scenario-col-title" style="color:var(--success)">✅ Continue Monitoring</div>
+              <div class="drop-zone" id="zone-monitor" ondragover="onDragOver(event)" ondrop="onDrop(event,'monitor')" ondragleave="onDragLeave(event)">
+                <div style="font-size:11px;color:var(--text-muted);text-align:center;padding:20px 0;pointer-events:none">Recently promoted or below HP threshold</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:12px;margin-top:14px">
+            <button class="training-btn primary" onclick="checkScenarios()">Check Answers</button>
+            <button class="training-btn ghost" onclick="resetScenarios()">↺ Reset</button>
+            <span id="scenario-score" style="font-size:13px;color:var(--text-secondary)"></span>
+          </div>
+          <div class="scenario-result" id="scenario-result"></div>
+        </div>
+      </div>
+
+      <!-- MODULE 2: Pre-Conversation Checklist -->
+      <div class="training-module">
+        <div class="module-header">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div class="module-icon" style="background:var(--success-light)">✅</div>
+            <div>
+              <div class="module-title">Module 2 — Pre-Promotion Checklist</div>
+              <div class="module-sub">Steps to complete before every promotion conversation. Check off each item as you go.</div>
+            </div>
+          </div>
+          <span class="module-badge scenario">Practical</span>
+        </div>
+        <div class="module-body">
+          <div class="progress-bar-wrap">
+            <div class="progress-label"><span>Progress</span><span id="check-progress-label">0 / 6 complete</span></div>
+            <div class="progress-bg"><div class="progress-fill" id="check-progress-bar" style="width:0%"></div></div>
+          </div>
+          <div id="checklist-items">
+            <div class="checklist-item" onclick="toggleCheck(this)">
+              <div class="check-box"></div>
+              <div><div class="check-title">Pull last 3 performance scores</div><div class="check-desc">Confirm avg ≥ 75. Have the numbers ready — don't rely on memory in the conversation.</div></div>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this)">
+              <div class="check-box"></div>
+              <div><div class="check-title">Confirm months in current role</div><div class="check-desc">Must be ≥ 6 months. For part-time staff, eligibility starts at 10 months.</div></div>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this)">
+              <div class="check-box"></div>
+              <div><div class="check-title">Identify the target role</div><div class="check-desc">Be specific before the meeting. "We think you're ready for Bartender" lands better than a vague "next step" conversation.</div></div>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this)">
+              <div class="check-box"></div>
+              <div><div class="check-title">Check wage tier impact</div><div class="check-desc">If the employee is on minimum wage, confirm whether the promotion includes a wage category change. Promotion without a pay bump reduces its impact.</div></div>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this)">
+              <div class="check-box"></div>
+              <div><div class="check-title">Book a private 1:1 — not a hallway chat</div><div class="check-desc">Promotion conversations need dedicated time. A casual mention signals low priority to the employee.</div></div>
+            </div>
+            <div class="checklist-item" onclick="toggleCheck(this)">
+              <div class="check-box"></div>
+              <div><div class="check-title">Log the outcome in the system same day</div><div class="check-desc">Delays in recording promotions distort the data dashboard and make it harder to track branch-level patterns.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODULE 3: Quiz -->
+      <div class="training-module">
+        <div class="module-header">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div class="module-icon" style="background:rgba(139,167,200,0.15)">🧠</div>
+            <div>
+              <div class="module-title">Module 3 — Knowledge Check</div>
+              <div class="module-sub">4 questions on the promotion framework and retention data.</div>
+            </div>
+          </div>
+          <span class="module-badge ref">Quiz</span>
+        </div>
+        <div class="module-body">
+          <div id="quiz-container"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Quick Reference -->
+    <div class="card mb24">
+      <div class="card-header"><div class="card-title">Quick Reference — What NOT to Do</div><div class="card-subtitle">Common mistakes that lead to losing high performers</div></div>
+      <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+        <div class="tip-card danger-tip">
+          <div class="tip-title">❌ Waiting for perfection</div>
+          <div class="tip-body">"They're not quite ready yet" — if an HP scores ≥75 and is past 9 months, the risk of waiting outweighs the risk of promoting early. Data shows they leave within months of this window.</div>
+        </div>
+        <div class="tip-card danger-tip">
+          <div class="tip-title">❌ Promoting without a wage change</div>
+          <div class="tip-body">A title change with no pay uplift signals the promotion isn't real. Minimum wage HPs churn at 2.4× the rate of premium-paid HPs. The wage conversation must happen simultaneously.</div>
+        </div>
+        <div class="tip-card danger-tip">
+          <div class="tip-title">❌ Treating all exits as "student turnover"</div>
+          <div class="tip-body">Manager interviews showed this assumption is widespread — but the data doesn't support it. High performers without promotions leave regardless of student status. Don't use this as a reason to delay.</div>
+        </div>
+        <div class="tip-card success-tip">
+          <div class="tip-title">✅ Early conversations reduce exits</div>
+          <div class="tip-body">You don't need to wait until the 9-month mandatory trigger. A 1:1 at month 6 that acknowledges strong performance and outlines a promotion path costs nothing and dramatically reduces exit risk.</div>
+        </div>
+        <div class="tip-card success-tip">
+          <div class="tip-title">✅ Part-timers need pathways too</div>
+          <div class="tip-body">Part-time HPs are often overlooked in promotion cycles. They exit at the highest rates — most before month 12. Explicit eligibility at 10 months is part of the standardized framework for a reason.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-title">📊 Know your branch benchmark</div>
+          <div class="tip-body">Check the Branch Health page before each review cycle. If your branch has a higher HP churn rate than others, that's a signal to accelerate your promotion pipeline — not a sign that your staff is just "less committed."</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- END TRAINING VIEW -->
+
+  <div class="page-footer">
+    <div>Palm Club People Analytics · <span class="page-footer-author">Taksh Girdhar</span></div>
+    <div class="page-footer-right"> March 2026</div>
+  </div>
+
+</main>
+
+<div class="modal-overlay" id="empModal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div><div class="modal-title" id="mName">—</div><div style="font-size:12.5px;color:var(--text-muted);margin-top:3px" id="mSub">—</div></div>
+      <div class="modal-close" onclick="document.getElementById('empModal').classList.remove('open')">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-stat-grid" id="mStats"></div>
+      <div class="modal-rec" id="mRec"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG — exact column names from Palm Club data dictionary ─────────────────
+var CFG = {
+  refDate:   new Date('2026-03-14'),
+  hpThresh:  75,
+  reviewMo:  9,
+  dataPath:  'data/',
+  exitWords: ['left','terminated','fired','resigned','quit','exit','separation','dismissed','inactive','departed','voluntary','involuntary']
+};
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+var MASTER = [], BSTATS = {};
+var curTab='all', curBranch='', curPos='', curTier='', curSearch='', curPill='all';
+var flagged = new Set(), reviewed = new Set(), charts = {};
+var curPage = 1, PAGE = 15;
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+var AVC = ['#C8A96E','#D4534A','#4A8C6F','#8BA7C8','#A96EC8','#6E9CC8','#C8736E','#6EC8B0'];
+function avc(s) { var h=0; for(var i=0;i<String(s).length;i++) h=(h<<5)-h+String(s).charCodeAt(i); return AVC[Math.abs(h)%AVC.length]; }
+function ini(s) { var p=String(s).split(' '); return p.length>=2?(p[0][0]+p[p.length-1][0]).toUpperCase():String(s).slice(0,2).toUpperCase(); }
+function pd(s) { if(!s) return null; var d=new Date(s); return isNaN(d.getTime())?null:d; }
+function days(a,b) { return Math.round((b.getTime()-a.getTime())/86400000); }
+function med(arr) { if(!arr.length) return 0; var s=arr.slice().sort(function(a,b){return a-b;}); var m=Math.floor(s.length/2); return s.length%2?+s[m].toFixed(1):+((s[m-1]+s[m])/2).toFixed(1); }
+
+// Flexible column finder — exact, then case-insensitive, then partial
+function findCol(sample, candidates) {
+  if(!sample) return null;
+  var keys = Object.keys(sample);
+  for(var ci=0; ci<candidates.length; ci++) {
+    var c = candidates[ci];
+    if(keys.indexOf(c) !== -1) return c;
+    var lower = c.toLowerCase();
+    for(var ki=0; ki<keys.length; ki++) {
+      if(keys[ki].toLowerCase() === lower) return keys[ki];
+    }
+    for(var ki=0; ki<keys.length; ki++) {
+      if(keys[ki].toLowerCase().indexOf(lower) !== -1 || lower.indexOf(keys[ki].toLowerCase()) !== -1) return keys[ki];
+    }
+  }
+  return null;
+}
+
+function isExitRole(role) {
+  var r = (role||'').toLowerCase();
+  for(var i=0;i<CFG.exitWords.length;i++) { if(r.indexOf(CFG.exitWords[i])!==-1) return true; }
+  return false;
+}
+
+// ── LOADING UI ────────────────────────────────────────────────────────────────
+function setLoader(pct,msg) {
+  document.getElementById('loader-bar').style.width = pct+'%';
+  document.getElementById('loader-status').textContent = msg;
+}
+function showError(msg) {
+  document.getElementById('loading-screen').style.display='none';
+  var es=document.getElementById('error-screen'); es.style.display='flex';
+  document.getElementById('error-detail').textContent=msg;
+}
+function showApp() {
+  document.getElementById('loading-screen').style.display='none';
+  document.getElementById('app-sidebar').style.display='flex';
+  document.getElementById('app-main').style.display='block';
+}
+
+// ── CSV LOADING ───────────────────────────────────────────────────────────────
+function loadCSV(file) {
+  return new Promise(function(res,rej) {
+    Papa.parse(CFG.dataPath+file, {
+      download:true, header:true, skipEmptyLines:true,
+      complete: function(r) { res(r.data); },
+      error: function(e) { rej(new Error('Failed to load '+file+': '+(e.message||e))); }
+    });
+  });
+}
+
+async function boot() {
+  try {
+    setLoader(10,'Loading employee.csv…');        var emp  = await loadCSV('employee.csv');
+    setLoader(28,'Loading applicant.csv…');        var appl = await loadCSV('applicant.csv');
+    setLoader(46,'Loading employee_changes.csv…'); var chg  = await loadCSV('employee_changes.csv');
+    setLoader(64,'Loading employee_performance.csv…'); var perf = await loadCSV('employee_performance.csv');
+    setLoader(82,'Loading branch.csv…');           var brch = await loadCSV('branch.csv');
+    setLoader(93,'Processing data…');
+    process(emp, appl, chg, perf, brch);
+    setLoader(100,'Done!');
+    setTimeout(showApp, 350);
+  } catch(e) {
+    showError(e.message + '\n\nMake sure:\n1. CSV files are in the data/ folder\n2. You are running a local server: python3 -m http.server 8080\n3. Then open http://localhost:8080');
+  }
+}
+
+// ── DATA PROCESSING ───────────────────────────────────────────────────────────
+function process(emp, appl, chg, perf, brch) {
+  var empS  = emp[0]  || {};
+  var chgS  = chg[0]  || {};
+  var perfS = perf[0] || {};
+  var brchS = brch[0] || {};
+  var applS = appl[0] || {};
+
+  // Resolve column names with flexible matching
+  var EMP_ID   = findCol(empS, ['EmployeeID','Employee ID','EmpID','Emp_ID','employeeid']);
+  var APPL_ID  = findCol(empS, ['ApplicantID','Applicant ID','AppID']);
+  var HIRED    = findCol(empS, ['HiredOn','Hired On','HireDate','Hire Date','StartDate','Start Date']);
+  var BRANCH   = findCol(empS, ['Branch#','Branch #','Branch','BranchID','BranchNo','Location']);
+  var STATUS   = findCol(empS, ['Current status','CurrentStatus','Status']);
+  var POSITION = findCol(empS, ['Position','EmploymentType','Employment Type','Type']);
+  var ROLE     = findCol(empS, ['Role','JobTitle','Job Title','position']);
+  var HOURS    = findCol(empS, ['AvgWorkingHours/Week','Avg Working Hours/Week','AvgHours','HoursPerWeek','Hours']);
+  var WAGE     = findCol(empS, ['Wage','WageCategory','Wage Category','Salary','Compensation']);
+
+  var CHG_EMP  = findCol(chgS, ['EmployeeID','Employee ID','EmpID']);
+  var CHG_ROLE = findCol(chgS, ['NewRole','New Role','RoleTo','Role']);
+  var CHG_DATE = findCol(chgS, ['DateChanged','Date Changed','ChangeDate','Date']);
+  var CHG_RSN  = findCol(chgS, ['ReasonForLeaving','Reason For Leaving','Reason']);
+
+  var PERF_EMP  = findCol(perfS, ['EmployeeID','Employee ID','EmpID']);
+  var PERF_SCR  = findCol(perfS, ['PerformanceScore','Performance Score','Score','Rating']);
+  var PERF_DATE = findCol(perfS, ['DateReviewed','Date Reviewed','ReviewDate','Date']);
+
+  var BR_NO    = findCol(brchS, ['BranchNo','Branch No','BranchID','Branch#','Branch']);
+  var BR_NAME  = findCol(brchS, ['BranchName','Branch Name','Name']);
+  var BR_STARS = findCol(brchS, ['Stars','Rating','StarRating','Star Rating']);
+
+  var APPL_AID   = findCol(applS, ['ApplicantID','Applicant ID','AppID']);
+  var APPL_FNAME = findCol(applS, ['FirstName','First Name','fname']);
+  var APPL_LNAME = findCol(applS, ['LastName','Last Name','lname','Surname']);
+  var APPL_NAME  = findCol(applS, ['Name','FullName','Full Name','ApplicantName']);
+  var APPL_EDU   = findCol(applS, ['HighestEducationLevel','Highest Education Level','Education']);
+  var APPL_YOB   = findCol(applS, ['YearOfBirth','Year Of Birth','BirthYear']);
+
+  // Log for debugging
+  console.log('Columns resolved:', {EMP_ID,APPL_ID,HIRED,BRANCH,POSITION,ROLE,HOURS,WAGE});
+  console.log('Changes cols:', {CHG_EMP,CHG_ROLE,CHG_DATE});
+  console.log('All unique NewRole values:', [...new Set(chg.map(function(r){return r[CHG_ROLE];}).filter(Boolean))]);
+
+  // Avg performance per employee + sorted score history for sparklines
+  var avgPerf = {};
+  var perfHistory = {};
+  perf.forEach(function(p) {
+    var id = p[PERF_EMP];
+    var sc = parseFloat(p[PERF_SCR]);
+    var dt = pd(p[PERF_DATE]);
+    if(!id || isNaN(sc)) return;
+    if(!avgPerf[id]) avgPerf[id] = {s:0,n:0};
+    avgPerf[id].s += sc; avgPerf[id].n++;
+    if(!perfHistory[id]) perfHistory[id] = [];
+    perfHistory[id].push({date:dt, score:sc});
+  });
+  Object.keys(perfHistory).forEach(function(id) {
+    perfHistory[id].sort(function(a,b){
+      var da = a.date ? a.date.getTime() : 0;
+      var db = b.date ? b.date.getTime() : 0;
+      return da - db;
+    });
+  });
+
+  // Exit and promotion dates from changes
+  var exitDate = {}, promoDate = {};
+  var promoRoles = ['host','server assistant','server','bartender','shift lead','manager','supervisor','lead'];
+  chg.forEach(function(c) {
+    var id   = c[CHG_EMP];
+    var role = (c[CHG_ROLE]||'').trim();
+    var dt   = pd(c[CHG_DATE]);
+    if(!id || !dt) return;
+    if(isExitRole(role)) {
+      if(!exitDate[id] || dt>exitDate[id]) exitDate[id]=dt;
+    } else if(role) {
+      var rl = role.toLowerCase();
+      var isPromo = promoRoles.some(function(pr){return rl.indexOf(pr)!==-1;});
+      if(isPromo) {
+        if(!promoDate[id] || dt<promoDate[id]) promoDate[id]=dt;
+      }
+    }
+  });
+  console.log('Exits detected:', Object.keys(exitDate).length, '| Promos detected:', Object.keys(promoDate).length);
+
+  // Applicant map
+  var applMap = {};
+  appl.forEach(function(a) {
+    var id = a[APPL_AID]; if(!id) return;
+    var name = '';
+    if(APPL_NAME && a[APPL_NAME]) name = a[APPL_NAME].trim();
+    else if(APPL_FNAME && APPL_LNAME) name = ((a[APPL_FNAME]||'')+' '+(a[APPL_LNAME]||'')).trim();
+    applMap[id] = {name:name, edu:(a[APPL_EDU]||''), yob:parseInt(a[APPL_YOB])||null};
+  });
+
+  // Branch avg stars
+  var brStarsMap = {};
+  brch.forEach(function(b) {
+    var no=b[BR_NO]; var st=parseFloat(b[BR_STARS]);
+    if(no&&!isNaN(st)){if(!brStarsMap[no])brStarsMap[no]=[]; brStarsMap[no].push(st);}
+  });
+  var avgStarsMap = {};
+  Object.keys(brStarsMap).forEach(function(k){ avgStarsMap[k]=+(brStarsMap[k].reduce(function(a,x){return a+x;},0)/brStarsMap[k].length).toFixed(2); });
+
+  // Branch name map
+  var brNames = {};
+  brch.forEach(function(b){ if(b[BR_NO]) brNames[b[BR_NO]]=b[BR_NAME]||b[BR_NO]; });
+
+  // Build master table
+  MASTER = emp.map(function(e) {
+    var eid = e[EMP_ID]; if(!eid) return null;
+    var aid = e[APPL_ID];
+    var hiredOn = pd(e[HIRED]);
+    var exitDt  = exitDate[eid]||null;
+    var endDate = exitDt||CFG.refDate;
+    var tenMo   = hiredOn ? +(days(hiredOn,endDate)/30.44).toFixed(1) : 0;
+    var pf = avgPerf[eid];
+    var avgSc = pf ? +(pf.s/pf.n).toFixed(1) : null;
+    var firstPromo = promoDate[eid]||null;
+    var mToPromo = (hiredOn&&firstPromo) ? +(days(hiredOn,firstPromo)/30.44).toFixed(1) : null;
+    var mSincePromo = firstPromo ? +(days(firstPromo,exitDt||CFG.refDate)/30.44).toFixed(1) : +tenMo.toFixed(1);
+    var branchId   = e[BRANCH];
+    var branchName = brNames[branchId]||branchId||'—';
+    var ap = applMap[aid]||{};
+    var displayName = ap.name || ('Employee '+eid);
+    return {
+      eid:eid, aid:aid,
+      name:displayName,
+      role:e[ROLE]||'—',
+      branch:branchName, branchId:branchId,
+      pos:e[POSITION]||'—',
+      wage:e[WAGE]||'—',
+      status:e[STATUS]||'—',
+      hours:parseFloat(e[HOURS])||null,
+      hiredOn:hiredOn, exitDt:exitDt,
+      churned:!!exitDt,
+      tenMo:tenMo, avgSc:avgSc,
+      isHP:avgSc!==null && avgSc>=CFG.hpThresh,
+      firstPromo:firstPromo, mToPromo:mToPromo,
+      mNoPromo:+mSincePromo,
+      everPromo:!!firstPromo,
+      edu:ap.edu, stars:avgStarsMap[branchId]||null,
+      perfScores: perfHistory[eid] ? perfHistory[eid].map(function(x){return x.score;}) : []
+    };
+  }).filter(Boolean);
+
+  console.log('Master:', MASTER.length, 'employees |', MASTER.filter(function(e){return e.isHP;}).length, 'HP |', MASTER.filter(function(e){return e.churned;}).length, 'churned');
+
+  // Branch stats
+  var bNames = [];
+  MASTER.forEach(function(e){ if(e.branch&&e.branch!=='—'&&bNames.indexOf(e.branch)===-1) bNames.push(e.branch); });
+  bNames.sort();
+
+  bNames.forEach(function(b) {
+    var all=MASTER.filter(function(e){return e.branch===b;});
+    var hp=all.filter(function(e){return e.isHP;});
+    var hpC=hp.filter(function(e){return e.churned;});
+    var hpPr=hp.filter(function(e){return e.everPromo;});
+    var prW12=hpPr.filter(function(e){return e.mToPromo!==null&&e.mToPromo<=12;});
+    var scored=all.filter(function(e){return e.avgSc!==null;});
+    BSTATS[b]={
+      total:all.length,
+      hpCount:hp.length,
+      hpPct:hp.length?+(hp.length/all.length*100).toFixed(1):0,
+      hpChurn:hp.length?+(hpC.length/hp.length*100).toFixed(1):0,
+      avgSc:scored.length?+(scored.reduce(function(s,e){return s+e.avgSc;},0)/scored.length).toFixed(1):null,
+      avgStars:all[0]?all[0].stars:null,
+      promoRate:hp.length?+(prW12.length/hp.length*100).toFixed(1):0,
+      promoRet:hpPr.length?+(hpPr.filter(function(e){return !e.churned;}).length/hpPr.length*100).toFixed(1):null,
+      noPromoRet:hp.filter(function(e){return !e.everPromo;}).length?+(hp.filter(function(e){return !e.everPromo&&!e.churned;}).length/hp.filter(function(e){return !e.everPromo;}).length*100).toFixed(1):null
+    };
+  });
+
+  buildBranchFilters(bNames);
+  renderAll();
+}
+
+// ── BRANCH FILTERS ────────────────────────────────────────────────────────────
+function buildBranchFilters(bNames) {
+  var colors=['#D4534A','#D4894A','#4A8C6F','#8BA7C8','#9C6EC8','#6E8CC8','#C8A96E'];
+  var listEl=document.getElementById('branch-btn-list');
+  var selEl=document.getElementById('selBranch');
+  var posVals=[];
+  MASTER.forEach(function(e){ if(e.pos&&posVals.indexOf(e.pos)===-1) posVals.push(e.pos); });
+  posVals.sort();
+  var posEl=document.getElementById('selPos');
+  posVals.forEach(function(p){ posEl.innerHTML+='<option value="'+p+'">'+p+'</option>'; });
+
+  bNames.forEach(function(b,i) {
+    var col=colors[i%colors.length];
+    listEl.innerHTML+='<div class="branch-btn" onclick="filterBranch(\''+b+'\',this)" style="color:'+col+'"><span>'+b+'</span><span class="branch-dot"></span></div>';
+    selEl.innerHTML+='<option value="'+b+'">'+b+'</option>';
+  });
+}
+
+// ── RENDER ALL ────────────────────────────────────────────────────────────────
+function renderAll() { renderKPIs(); renderCharts(); renderBranchTable(); renderEmpTable(); renderPromoTable(); }
+
+// ── KPIs ──────────────────────────────────────────────────────────────────────
+function renderKPIs() {
+  var hp=MASTER.filter(function(e){return e.isHP;});
+  var nhp=MASTER.filter(function(e){return !e.isHP;});
+  var hpC=hp.filter(function(e){return e.churned;});
+  var hpA=hp.filter(function(e){return !e.churned;});
+  var hpCR=hp.length?+(hpC.length/hp.length*100).toFixed(1):0;
+  var nhpCR=nhp.length?+(nhp.filter(function(e){return e.churned;}).length/nhp.length*100).toFixed(1):0;
+
+  var hpMP=hp.filter(function(e){return e.mToPromo!==null&&e.mToPromo>0;});
+  var nhpMP=nhp.filter(function(e){return e.mToPromo!==null&&e.mToPromo>0;});
+  var hpAvgP=hpMP.length?+(hpMP.reduce(function(s,e){return s+e.mToPromo;},0)/hpMP.length).toFixed(1):null;
+  var nhpAvgP=nhpMP.length?+(nhpMP.reduce(function(s,e){return s+e.mToPromo;},0)/nhpMP.length).toFixed(1):null;
+  var gap=(hpAvgP&&nhpAvgP)?+(nhpAvgP-hpAvgP).toFixed(1):null;
+
+  var hpPr=hp.filter(function(e){return e.everPromo;});
+  var hpNPr=hp.filter(function(e){return !e.everPromo;});
+  var prRet=hpPr.length?+(hpPr.filter(function(e){return !e.churned;}).length/hpPr.length*100).toFixed(0):null;
+  var nprRet=hpNPr.length?+(hpNPr.filter(function(e){return !e.churned;}).length/hpNPr.length*100).toFixed(0):null;
+  var lift=(prRet!==null&&nprRet!==null)?+(prRet-nprRet).toFixed(0):null;
+
+  var atRisk=hpA.filter(function(e){return e.mNoPromo>=CFG.reviewMo;});
+  var topBr=null;
+  if(atRisk.length) {
+    var counts={};
+    atRisk.forEach(function(e){counts[e.branch]=(counts[e.branch]||0)+1;});
+    topBr=Object.entries(counts).sort(function(a,b){return b[1]-a[1];})[0];
+  }
+
+  document.getElementById('k-hpchurn').textContent=hpCR+'%';
+  document.getElementById('k-hpchurn-d').innerHTML='<span class="delta-badge '+(hpCR>nhpCR?'up':'down')+'">'+(hpCR>nhpCR?'↑ '+Math.abs(+(hpCR-nhpCR).toFixed(1))+'pp higher':'↓ lower')+'</span> than NHP rate';
+  document.getElementById('k-promoavg').textContent=hpAvgP?hpAvgP:'—';
+  document.getElementById('k-promoavg-d').innerHTML=gap?'<span class="delta-badge '+(gap<3?'up':'down')+'">'+gap+' mo gap</span> HP vs. NHP':'';
+  document.getElementById('k-hpcount').textContent=hpA.length;
+  document.getElementById('k-hpcount-d').innerHTML='<span class="delta-badge down">▲ '+( hp.length?(hp.length/MASTER.length*100).toFixed(0):0)+'%</span> of all employees';
+  document.getElementById('k-promored').textContent=prRet!==null?prRet+'%':'—';
+  document.getElementById('k-promored-d').innerHTML=lift?'<span class="delta-badge down">+'+lift+'pp</span> vs. unpromoted HPs':'';
+
+  document.getElementById('banner-title').textContent=atRisk.length+' High Performers at churn risk';
+  document.getElementById('banner-sub').textContent=topBr?topBr[0]+' has the most ('+topBr[1]+') — past '+CFG.reviewMo+'-month review window with no promotion':'No critical risk alerts at this time.';
+  document.getElementById('promo-banner').textContent=lift?'Promotion delivers a '+lift+'pp retention lift. This is the highest-ROI intervention available.':'Promoted HPs retain at higher rates than unpromoted.';
+  document.getElementById('ins-1').textContent=gap?'HP median promo time is only '+gap+' months faster than NHP — top talent is not differentiated.':'Insufficient promotion data to compare.';
+  document.getElementById('ins-2').textContent=(prRet!==null&&nprRet!==null)?'Promoted HPs retain at '+prRet+'% vs. '+nprRet+'% unpromoted. The ROI on promotion is clear.':'Promoted HPs retain at higher rates.';
+  document.getElementById('overdue-badge').textContent=atRisk.length+' Overdue';
+}
+
+// ── CHARTS ────────────────────────────────────────────────────────────────────
+var TICK = {font:{family:'DM Sans',size:11},color:'#6B6560'};
+var GRID = {color:'rgba(0,0,0,0.04)'};
+
+function mkC(id,type,data,opts) {
+  var el=document.getElementById(id); if(!el) return;
+  if(charts[id]) { charts[id].destroy(); delete charts[id]; }
+  var base = {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{labels:{font:{family:'DM Sans',size:11},color:'#6B6560',boxWidth:12}}},
+    scales:{x:{grid:GRID,ticks:TICK},y:{grid:GRID,ticks:TICK}}
+  };
+  // merge opts into base
+  if(opts) {
+    if(opts.plugins) { for(var k in opts.plugins) base.plugins[k]=opts.plugins[k]; }
+    if(opts.scales)  { for(var k in opts.scales)  base.scales[k]=opts.scales[k]; }
+  }
+  charts[id] = new Chart(el,{type:type,data:data,options:base});
+}
+
+function renderCharts() {
+  var fil = curPill==='all' ? MASTER : MASTER.filter(function(e){return e.pos===curPill;});
+  var hp=fil.filter(function(e){return e.isHP;}), nhp=fil.filter(function(e){return !e.isHP;});
+  var hpCR=hp.length?+(hp.filter(function(e){return e.churned;}).length/hp.length*100).toFixed(1):0;
+  var nhpCR=nhp.length?+(nhp.filter(function(e){return e.churned;}).length/nhp.length*100).toFixed(1):0;
+  var maxTier=Math.max(hpCR,nhpCR,1);
+
+  // Q1 churn by tier
+  mkC('cChurnTier','bar',
+    {labels:['High Performers','Non-High Performers'],
+     datasets:[{label:'Churn Rate (%)',data:[hpCR,nhpCR],
+       backgroundColor:['rgba(212,83,74,0.82)','rgba(139,167,200,0.72)'],borderRadius:6,barThickness:52}]},
+    {plugins:{legend:{display:false}},
+     scales:{y:{min:0,max:Math.ceil(maxTier*1.4)||10,ticks:{callback:function(v){return v+'%';},font:{family:'DM Sans',size:11},color:'#6B6560'},grid:GRID},
+             x:{grid:{display:false},ticks:TICK}}}
+  );
+
+  // Q2 tenure exit distribution — bins match real data (0-6, 6-12, 1-2yr, 2-4yr, 4+yr)
+  var bins=[6,12,24,48,999];
+  var bLab=['0–6 mo','6–12 mo','1–2 yr','2–4 yr','4+ yr'];
+  var hpB=bins.map(function(){return 0;}), nhpB=bins.map(function(){return 0;});
+  MASTER.filter(function(e){return e.churned&&e.tenMo>=0;}).forEach(function(e) {
+    var idx=0; while(idx<bins.length-1&&e.tenMo>bins[idx]) idx++;
+    if(e.isHP) hpB[idx]++; else nhpB[idx]++;
+  });
+  var maxExit=Math.max.apply(null,hpB.map(function(v,i){return v+nhpB[i];}).concat([1]));
+  mkC('cTenureExit','bar',
+    {labels:bLab,
+     datasets:[
+       {label:'Non-HP',   data:nhpB,backgroundColor:'rgba(139,167,200,0.72)',borderRadius:0},
+       {label:'High Performers',data:hpB, backgroundColor:'rgba(212,83,74,0.80)', borderRadius:{topLeft:4,topRight:4}}
+     ]},
+    {plugins:{
+       legend:{labels:{font:{family:'DM Sans',size:11},color:'#6B6560',boxWidth:12}},
+       annotation:{annotations:{box:{type:'box',xMin:-0.5,xMax:1.5,backgroundColor:'rgba(212,83,74,0.05)',borderColor:'rgba(212,83,74,0.25)',borderWidth:1,borderDash:[4,3],
+         label:{content:'Critical retention window',display:true,position:'start',color:'var(--danger)',font:{size:10,family:'DM Sans'}}}}}
+     },
+     scales:{x:{grid:{display:false},ticks:{font:{family:'DM Sans',size:11},color:'#6B6560'},stacked:true},
+             y:{min:0,max:Math.ceil(maxExit*1.15)||10,
+                title:{display:true,text:'Number of Exits',font:{family:'DM Sans',size:10},color:'#9E9890'},
+                ticks:{font:{family:'DM Sans',size:11},color:'#6B6560'},grid:GRID,stacked:true}}}
+  );
+
+  // Branch churn overview
+  var bNames=Object.keys(BSTATS).sort(function(a,b){return BSTATS[b].hpChurn-BSTATS[a].hpChurn;});
+  var bCols=['#D4534A','#D4894A','#8BA7C8','#4A8C6F','#9C6EC8','#6E8CC8','#C8A96E'];
+  var bColors=bNames.map(function(_,i){return bCols[i%bCols.length];});
+  var maxBC=Math.max.apply(null,bNames.map(function(b){return BSTATS[b].hpChurn;}).concat([1]));
+  mkC('cBranchChurn','bar',
+    {labels:bNames,
+     datasets:[{label:'HP Churn %',data:bNames.map(function(b){return BSTATS[b].hpChurn;}),
+       backgroundColor:bColors.map(function(c){return c+'CC';}),borderRadius:6,barThickness:38}]},
+    {plugins:{legend:{display:false}},
+     scales:{y:{min:0,max:Math.ceil(maxBC*1.4)||10,ticks:{callback:function(v){return v+'%';},font:{family:'DM Sans',size:11},color:'#6B6560'},grid:GRID},
+             x:{grid:{display:false},ticks:TICK}}}
+  );
+
+  // Wage churn
+  var wages=[];
+  MASTER.forEach(function(e){if(e.wage&&wages.indexOf(e.wage)===-1)wages.push(e.wage);});
+  var wStayed=wages.map(function(w){return MASTER.filter(function(e){return e.isHP&&e.wage===w&&!e.churned;}).length;});
+  var wLeft  =wages.map(function(w){return MASTER.filter(function(e){return e.isHP&&e.wage===w&&e.churned;}).length;});
+  var maxW=Math.max.apply(null,wStayed.concat(wLeft).concat([1]));
+  mkC('cWageChurn','bar',
+    {labels:wages,
+     datasets:[{label:'Stayed',data:wStayed,backgroundColor:'rgba(74,140,111,0.78)',borderRadius:5,barThickness:34},
+               {label:'Left',  data:wLeft,  backgroundColor:'rgba(212,83,74,0.78)', borderRadius:5,barThickness:34}]},
+    {scales:{x:{grid:{display:false},ticks:TICK},
+             y:{min:0,max:Math.ceil(maxW*1.35)||5,ticks:{font:{family:'DM Sans',size:11},color:'#6B6560'},grid:GRID}}}
+  );
+
+  // Branch detail (branches view)
+  var bVals=bNames.map(function(b){return BSTATS[b].hpChurn;});
+  var sVals=bNames.map(function(b){return BSTATS[b].avgStars?+(BSTATS[b].avgStars*20).toFixed(0):null;});
+  var maxBD=Math.max.apply(null,bVals.concat([1]));
+  mkC('cBranchDetail','bar',
+    {labels:bNames,
+     datasets:[{label:'HP Churn %',data:bVals,backgroundColor:bColors.map(function(c){return c+'CC';}),borderRadius:5,yAxisID:'y',barThickness:34},
+               {label:'Avg Stars ×20',data:sVals,type:'line',borderColor:'#C8A96E',backgroundColor:'rgba(200,169,110,0.1)',
+                tension:0.4,pointRadius:5,pointBackgroundColor:'#C8A96E',borderWidth:2,yAxisID:'y2'}]},
+    {scales:{y:{min:0,max:Math.ceil(maxBD*1.4)||10,ticks:{callback:function(v){return v+'%';},font:{family:'DM Sans',size:11},color:'#6B6560'},grid:GRID},
+             y2:{position:'right',min:0,max:100,ticks:{font:{family:'DM Sans',size:11},color:'#9E9890'},grid:{display:false}},
+             x:{grid:{display:false},ticks:TICK}}}
+  );
+
+  // Branch promo rate
+  var prVals=bNames.map(function(b){return BSTATS[b].promoRate;});
+  var maxPR=Math.max.apply(null,prVals.concat([1]));
+  mkC('cBranchPromo','bar',
+    {labels:bNames,
+     datasets:[{label:'% HPs promoted ≤12mo',data:prVals,backgroundColor:bColors.map(function(c){return c+'CC';}),borderRadius:6,barThickness:38}]},
+    {plugins:{legend:{display:false}},
+     scales:{y:{min:0,max:Math.ceil(maxPR*1.4)||10,ticks:{callback:function(v){return v+'%';},font:{family:'DM Sans',size:11},color:'#6B6560'},grid:GRID},
+             x:{grid:{display:false},ticks:TICK}}}
+  );
+
+  // Promo time — use real medians from data (HP: 3.6mo, NHP: 3.4mo per density plot)
+  // Fall back to computed if data is rich enough, otherwise use known values
+  var allHP=MASTER.filter(function(e){return e.isHP&&e.mToPromo!==null&&e.mToPromo>0;});
+  var allNHP=MASTER.filter(function(e){return !e.isHP&&e.mToPromo!==null&&e.mToPromo>0;});
+  var hpMed  = allHP.length  >= 5 ? med(allHP.map(function(e){return e.mToPromo;}))  : 3.6;
+  var nhpMed = allNHP.length >= 5 ? med(allNHP.map(function(e){return e.mToPromo;})) : 3.4;
+  // Target: HP should be promoted ~2-3 months faster than NHP to create meaningful differentiation
+  var targetHPMed = Math.max(nhpMed - 2.5, 1.0);
+  var maxPT=Math.max(hpMed,nhpMed,targetHPMed,1)*1.5;
+  mkC('cPromoTime','bar',
+    {labels:['High Performers','Non-HP'],
+     datasets:[
+       {label:'Current median',data:[hpMed,nhpMed],
+        backgroundColor:['rgba(212,83,74,0.82)','rgba(139,167,200,0.72)'],borderRadius:6,barThickness:52,order:2},
+       {label:'HP target (–2.5mo gap)',data:[targetHPMed,null],
+        type:'line',borderColor:'rgba(74,140,111,0.9)',backgroundColor:'transparent',
+        borderWidth:2,borderDash:[5,4],pointRadius:6,pointBackgroundColor:'var(--success)',
+        pointBorderColor:'white',pointBorderWidth:2,order:1}
+     ]},
+    {plugins:{legend:{labels:{font:{family:'DM Sans',size:11},color:'#6B6560',boxWidth:10,padding:14}}},
+     scales:{y:{min:0,max:Math.ceil(maxPT)||10,
+                ticks:{callback:function(v){return v+' mo';},font:{family:'DM Sans',size:11},color:'#6B6560'},grid:GRID},
+             x:{grid:{display:false},ticks:TICK}}}
+  );
+
+  // Promo retention
+  var hp2=MASTER.filter(function(e){return e.isHP;});
+  var prDen=hp2.filter(function(e){return e.everPromo;}).length||1;
+  var nprDen=hp2.filter(function(e){return !e.everPromo;}).length||1;
+  var prR =+(hp2.filter(function(e){return e.everPromo&&!e.churned;}).length/prDen*100).toFixed(0);
+  var npR =+(hp2.filter(function(e){return !e.everPromo&&!e.churned;}).length/nprDen*100).toFixed(0);
+  mkC('cPromoRet','bar',
+    {labels:['Never Promoted','Promoted'],
+     datasets:[{label:'Retention Rate (%)',data:[npR,prR],
+       backgroundColor:['rgba(212,83,74,0.78)','rgba(74,140,111,0.82)'],borderRadius:6,barThickness:52}]},
+    {plugins:{legend:{display:false}},
+     scales:{y:{min:0,max:100,ticks:{callback:function(v){return v+'%';},font:{family:'DM Sans',size:11},color:'#6B6560'},grid:GRID},
+             x:{grid:{display:false},ticks:TICK}}}
+  );
+
+  // Branch KPI cards
+  var bSorted=Object.entries(BSTATS).sort(function(a,b){return b[1].hpChurn-a[1].hpChurn;});
+  var kCls=['danger','warning','gold','success'];
+  document.getElementById('branch-kpis').innerHTML=bSorted.slice(0,4).map(function(entry,i){
+    var name=entry[0], s=entry[1];
+    return '<div class="kpi-card '+kCls[i]+'"><div class="kpi-label">'+name+' — HP Churn</div><div class="kpi-value">'+s.hpChurn+'%</div><div class="kpi-delta"><span class="delta-badge '+(s.hpChurn>40?'up':'down')+'">'+(s.hpChurn>40?'Critical':s.hpChurn>25?'Watch':'Healthy')+'</span> '+s.total+' employees</div></div>';
+  }).join('');
+}
+
+// ── BRANCH TABLE ──────────────────────────────────────────────────────────────
+function renderBranchTable() {
+  document.getElementById('branchBody').innerHTML=Object.entries(BSTATS).sort(function(a,b){return b[1].hpChurn-a[1].hpChurn;}).map(function(entry){
+    var name=entry[0], s=entry[1];
+    var cc=s.hpChurn>40?'var(--danger)':s.hpChurn>25?'var(--warning)':'var(--success)';
+    var sc=s.hpChurn>40?'red':s.hpChurn>25?'orange':'green';
+    var sl=s.hpChurn>40?'Critical':s.hpChurn>25?'Watch':'Healthy';
+    return '<tr><td><strong>'+name+'</strong></td><td>'+s.total+'</td><td>'+s.hpPct+'%</td><td><div class="churn-bar-wrap"><div class="churn-bar-bg"><div class="churn-bar-fill" style="width:'+Math.min(s.hpChurn,100)+'%;background:'+cc+'"></div></div><span class="churn-pct" style="color:'+cc+'">'+s.hpChurn+'%</span></div></td><td>'+(s.avgSc||'—')+'</td><td>'+(s.avgStars?'⭐ '+s.avgStars:'—')+'</td><td><span class="status-pill '+sc+'">'+sl+'</span></td></tr>';
+  }).join('');
+}
+
+// ── EMPLOYEE TABLE ────────────────────────────────────────────────────────────
+function getFiltered() {
+  var d=MASTER.slice();
+  if(curTab==='hp')      d=d.filter(function(e){return e.isHP;});
+  if(curTab==='atrisk')  d=d.filter(function(e){return e.isHP&&!e.churned&&e.mNoPromo>=CFG.reviewMo;});
+  if(curTab==='flagged') d=d.filter(function(e){return flagged.has(e.eid);});
+  if(curBranch)  d=d.filter(function(e){return e.branch===curBranch;});
+  if(curPos)     d=d.filter(function(e){return e.pos===curPos;});
+  if(curTier==='HP')  d=d.filter(function(e){return e.isHP;});
+  if(curTier==='NHP') d=d.filter(function(e){return !e.isHP;});
+  if(curPill!=='all') d=d.filter(function(e){return e.pos===curPill;});
+  if(curSearch){ var s=curSearch.toLowerCase(); d=d.filter(function(e){return e.name.toLowerCase().indexOf(s)!==-1||e.role.toLowerCase().indexOf(s)!==-1;}); }
+  return d;
+}
+
+function renderEmpTable() {
+  var data=getFiltered();
+  var paged=data.slice((curPage-1)*PAGE, curPage*PAGE);
+  document.getElementById('empCount').textContent='Showing '+paged.length+' of '+data.length+' employees';
+
+  function sCol(s){return s>=CFG.hpThresh?'var(--success)':s>=60?'var(--warning)':'var(--danger)';}
+  function rClass(e){
+    if(e.churned)return 'red';
+    if(!e.isHP)return 'green';
+    if(e.mNoPromo>=CFG.reviewMo)return 'red';
+    if(e.mNoPromo>=6)return 'orange';
+    return 'green';
+  }
+  function rLabel(e){
+    if(e.churned)return 'Exited';
+    if(!e.isHP)return 'Low';
+    if(e.mNoPromo>=CFG.reviewMo)return 'High';
+    if(e.mNoPromo>=6)return 'Medium';
+    return 'Low';
+  }
+
+  document.getElementById('empBody').innerHTML=paged.map(function(e){
+    var fl=flagged.has(e.eid);
+    var warn=e.isHP&&!e.churned&&e.mNoPromo>=CFG.reviewMo?'⚠ ':'';
+    var sc=e.avgSc!==null?e.avgSc:0;
+    // Sparkline: encode scores as data attribute, draw after render
+    var sparkData = e.perfScores.length ? e.perfScores.join(',') : '';
+    var sparkId = 'spark-'+e.eid;
+    return '<tr onclick="openModal(\''+e.eid+'\')">'
+      +'<td><div class="emp-name-cell"><div class="emp-avatar" style="background:'+avc(e.eid)+'">'+ini(e.eid)+'</div><div><div class="emp-name">'+e.name+'</div><div class="emp-role-sub">'+e.role+'</div></div></div></td>'
+      +'<td>'+e.branch+'</td>'
+      +'<td><span class="status-pill '+(e.pos==='Full-time'?'green':'orange')+'">'+e.pos+'</span></td>'
+      +'<td><span class="hp-badge '+(e.isHP?'hp':'nhp')+'">'+(e.isHP?'HP':'NHP')+'</span></td>'
+      +'<td><div class="score-bar-wrap"><div class="score-bar-bg"><div class="score-bar-fill" style="width:'+sc+'%;background:'+(e.avgSc!==null?sCol(e.avgSc):'var(--border)')+'"></div></div><span style="font-weight:600;font-size:12px">'+(e.avgSc!==null?e.avgSc:'—')+'</span></div></td>'
+      +'<td><div class="sparkline-wrap"><canvas class="sparkline-canvas" id="'+sparkId+'" width="64" height="28" data-scores="'+sparkData+'" data-hp="'+(e.isHP?'1':'0')+'"></canvas></div></td>'
+      +'<td>'+e.tenMo+' mo</td>'
+      +'<td>'+warn+(e.churned?'Exited':e.mNoPromo+' mo')+'</td>'
+      +'<td>'+(e.hours||'—')+'</td>'
+      +'<td>'+e.wage+'</td>'
+      +'<td><span class="status-pill '+rClass(e)+'">'+rLabel(e)+'</span></td>'
+      +'<td onclick="event.stopPropagation()"><button class="promote-btn '+(fl?'flagged':'flag')+'" onclick="toggleFlag(\''+e.eid+'\',this)">'+(fl?'★ Flagged':'☆ Flag')+'</button></td>'
+      +'</tr>';
+  }).join('');
+
+  // Draw sparklines after DOM is updated
+  paged.forEach(function(e) {
+    drawSparkline('spark-'+e.eid);
+  });
+
+  var totalPgs=Math.ceil(data.length/PAGE);
+  var pHtml='';
+  for(var i=1;i<=Math.min(totalPgs,6);i++) pHtml+='<div class="page-btn '+(i===curPage?'active':'')+'" onclick="setPage('+i+')">'+i+'</div>';
+  if(totalPgs>6) pHtml+='<div class="page-btn" onclick="setPage('+(curPage<totalPgs?curPage+1:totalPgs)+')">→</div>';
+  document.getElementById('empPager').innerHTML=pHtml;
+}
+function setPage(n){curPage=n;renderEmpTable();}
+
+// ── PROMO TABLE ───────────────────────────────────────────────────────────────
+function renderPromoTable() {
+  var overdue=MASTER.filter(function(e){return e.isHP&&!e.churned&&e.mNoPromo>=CFG.reviewMo;}).sort(function(a,b){return b.mNoPromo-a.mNoPromo;});
+  document.getElementById('overdue-badge').textContent=overdue.length+' Overdue';
+  document.getElementById('promoBody').innerHTML=overdue.map(function(e){
+    var by=+(e.mNoPromo-CFG.reviewMo).toFixed(1);
+    var uc=by>3?'red':by>0?'orange':'green';
+    var ul=by>0?by+' mo overdue':'Due now';
+    var done=reviewed.has(e.eid);
+    return '<tr>'
+      +'<td><div class="emp-name-cell"><div class="emp-avatar" style="background:'+avc(e.eid)+'">'+ini(e.eid)+'</div><span class="emp-name">'+e.name+'</span></div></td>'
+      +'<td>'+e.branch+'</td>'
+      +'<td>'+e.role+'</td>'
+      +'<td><strong style="color:'+(e.avgSc>=CFG.hpThresh?'var(--success)':'var(--warning)')+'">'+( e.avgSc||'—')+'</strong></td>'
+      +'<td>'+e.mNoPromo+' mo</td>'
+      +'<td><span class="status-pill '+(done?'green':uc)+'">'+(done?'✓ Reviewed':ul)+'</span></td>'
+      +'<td><button class="promote-btn '+(done?'flagged':'flag')+'" onclick="markDone(\''+e.eid+'\',this)">'+(done?'✓ Done':'Review')+'</button></td>'
+      +'</tr>';
+  }).join('');
+}
+function markDone(id,btn){reviewed.add(id);btn.className='promote-btn flagged';btn.textContent='✓ Done';renderPromoTable();}
+
+// ── MODAL ─────────────────────────────────────────────────────────────────────
+function openModal(eid) {
+  var e=MASTER.filter(function(x){return x.eid==eid;})[0]; if(!e) return;
+  document.getElementById('mName').textContent=e.name;
+  document.getElementById('mSub').textContent=e.role+' · '+e.branch+' · '+e.pos;
+  function sc(s){return s>=CFG.hpThresh?'var(--success)':'var(--warning)';}
+  document.getElementById('mStats').innerHTML=
+    '<div class="modal-stat"><div class="modal-stat-label">Avg Score</div><div class="modal-stat-val" style="color:'+(e.avgSc!==null?sc(e.avgSc):'inherit')+'">'+(e.avgSc!==null?e.avgSc:'—')+'</div></div>'
+    +'<div class="modal-stat"><div class="modal-stat-label">Tenure</div><div class="modal-stat-val">'+e.tenMo+' mo</div></div>'
+    +'<div class="modal-stat"><div class="modal-stat-label">Without Promo</div><div class="modal-stat-val" style="color:'+(e.mNoPromo>=CFG.reviewMo?'var(--danger)':'inherit')+'">'+(e.churned?'Exited':e.mNoPromo+' mo')+'</div></div>'
+    +'<div class="modal-stat"><div class="modal-stat-label">Hrs / Week</div><div class="modal-stat-val">'+(e.hours||'—')+'</div></div>'
+    +'<div class="modal-stat"><div class="modal-stat-label">Wage</div><div class="modal-stat-val" style="font-size:14px">'+e.wage+'</div></div>'
+    +'<div class="modal-stat"><div class="modal-stat-label">Status</div><div class="modal-stat-val" style="font-size:14px"><span class="status-pill '+(e.churned?'red':e.isHP?'green':'orange')+'">'+(e.churned?'Exited':e.isHP?'Active HP':'Active')+'</span></div></div>';
+  var rec='';
+  if(e.churned) rec='This employee has exited. Review exit circumstances.';
+  else if(e.isHP&&e.mNoPromo>=CFG.reviewMo) rec='⚠ Immediate action needed. This HP has been in role '+e.mNoPromo+' months without a promotion review — at peak exit risk. Schedule a 1:1 and initiate a formal review now.';
+  else if(e.isHP) rec='Within a healthy promotion window. Schedule a formal review at the '+CFG.reviewMo+'-month mark. Score of '+e.avgSc+' qualifies under the standardized framework.';
+  else rec='Score of '+(e.avgSc||'—')+' is below HP threshold (≥'+CFG.hpThresh+'). Focus on performance coaching and re-evaluate next review cycle.';
+  document.getElementById('mRec').innerHTML='<div class="modal-rec-title">Manager Recommendation</div><div class="modal-rec-text">'+rec+'</div>';
+  document.getElementById('empModal').classList.add('open');
+}
+function closeModal(ev){if(ev.target.id==='empModal')document.getElementById('empModal').classList.remove('open');}
+
+// ── NAV / FILTERS ─────────────────────────────────────────────────────────────
+function switchView(id,el){
+  document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
+  document.getElementById('view-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+  if(el) el.classList.add('active');
+}
+function filterBranch(b,el){
+  document.querySelectorAll('.branch-btn').forEach(function(x){x.classList.remove('active');});
+  el.classList.add('active'); curBranch=b;
+  var sel=document.getElementById('selBranch'); if(sel) sel.value=b;
+  curPage=1; renderEmpTable();
+}
+function switchTab(el,tab){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  el.classList.add('active'); curTab=tab; curPage=1; renderEmpTable();
+}
+function doSearch(v){curSearch=v;curPage=1;renderEmpTable();}
+function applyFilters(){
+  curBranch=document.getElementById('selBranch').value;
+  curPos=document.getElementById('selPos').value;
+  curTier=document.getElementById('selTier').value;
+  curPage=1; renderEmpTable();
+}
+function setPill(f,el){
+  curPill=f;
+  document.querySelectorAll('.filter-pill').forEach(function(p){p.classList.remove('active');});
+  el.classList.add('active'); renderKPIs(); renderCharts();
+}
+function toggleFlag(id,btn){
+  if(flagged.has(id)){flagged.delete(id);btn.className='promote-btn flag';btn.textContent='☆ Flag';}
+  else{flagged.add(id);btn.className='promote-btn flagged';btn.textContent='★ Flagged';}
+}
+
+// ── BOOT ──────────────────────────────────────────────────────────────────────
+// ── TRAINING — DRAG & DROP ────────────────────────────────────────────────────
+var dragCard = null;
+
+function onDragStart(ev) {
+  dragCard = ev.currentTarget;
+  ev.currentTarget.classList.add('dragging');
+  ev.dataTransfer.effectAllowed = 'move';
+  ev.dataTransfer.setData('text/plain', ev.currentTarget.dataset.id);
+}
+function onDragEnd(ev) {
+  ev.currentTarget.classList.remove('dragging');
+  document.querySelectorAll('.drop-zone,.scenario-bank').forEach(function(z){
+    z.classList.remove('drag-over');
+  });
+}
+function onDragOver(ev) {
+  ev.preventDefault();
+  ev.currentTarget.classList.add('drag-over');
+}
+function onDragLeave(ev) {
+  ev.currentTarget.classList.remove('drag-over');
+}
+function onDrop(ev, zone) {
+  ev.preventDefault();
+  ev.currentTarget.classList.remove('drag-over');
+  if(!dragCard) return;
+  // Remove placeholder text if present
+  var ph = ev.currentTarget.querySelector('div[style*="pointer-events:none"]');
+  if(ph) ph.remove();
+  // Remove placed styling
+  dragCard.classList.remove('placed-correct','placed-wrong','dragging');
+  ev.currentTarget.appendChild(dragCard);
+  dragCard = null;
+  // Clear previous result
+  document.getElementById('scenario-result').className = 'scenario-result';
+  document.getElementById('scenario-score').textContent = '';
+}
+
+function checkScenarios() {
+  var correct = 0, total = 0;
+  ['act','schedule','monitor'].forEach(function(zone) {
+    var zoneEl = document.getElementById('zone-'+zone);
+    zoneEl.querySelectorAll('.scenario-card').forEach(function(card) {
+      total++;
+      card.classList.remove('placed-correct','placed-wrong');
+      if(card.dataset.correct === zone) {
+        card.classList.add('placed-correct');
+        correct++;
+      } else {
+        card.classList.add('placed-wrong');
+      }
+    });
+  });
+  var pct = total ? Math.round(correct/total*100) : 0;
+  document.getElementById('scenario-score').textContent = correct+' / '+total+' correct';
+  var res = document.getElementById('scenario-result');
+  if(total === 0) {
+    res.className = 'scenario-result show fail';
+    res.textContent = 'Drag the scenario cards into the columns first, then check your answers.';
+  } else if(pct === 100) {
+    res.className = 'scenario-result show pass';
+    res.textContent = '✅ Perfect score! You correctly identified when to act immediately, schedule a review, and continue monitoring. Key insight: any HP past 9 months without a promotion is in the Act Now category — regardless of whether they\'ve flagged concerns.';
+  } else if(pct >= 50) {
+    res.className = 'scenario-result show pass';
+    res.textContent = '👍 '+pct+'% correct. Review the highlighted cards — red border means incorrect placement. Tip: the most common mistake is moving part-time HPs at month 7-8 to "monitor" when they should already be "schedule."';
+  } else {
+    res.className = 'scenario-result show fail';
+    res.textContent = '⚠ '+pct+'% correct. Review the framework: Act Now = HP past 9 months OR has competing offer. Schedule = HP approaching eligibility. Monitor = recently promoted or below HP threshold.';
+  }
+}
+
+function resetScenarios() {
+  var bank = document.getElementById('scenario-bank');
+  ['act','schedule','monitor'].forEach(function(zone) {
+    var zoneEl = document.getElementById('zone-'+zone);
+    zoneEl.querySelectorAll('.scenario-card').forEach(function(card) {
+      card.classList.remove('placed-correct','placed-wrong','dragging');
+      bank.appendChild(card);
+    });
+  });
+  document.getElementById('scenario-result').className = 'scenario-result';
+  document.getElementById('scenario-score').textContent = '';
+}
+
+// ── TRAINING — CHECKLIST ──────────────────────────────────────────────────────
+function toggleCheck(item) {
+  item.classList.toggle('checked');
+  var box = item.querySelector('.check-box');
+  box.textContent = item.classList.contains('checked') ? '✓' : '';
+  updateCheckProgress();
+}
+function updateCheckProgress() {
+  var items = document.querySelectorAll('.checklist-item');
+  var done = document.querySelectorAll('.checklist-item.checked').length;
+  var total = items.length;
+  var pct = total ? Math.round(done/total*100) : 0;
+  var bar = document.getElementById('check-progress-bar');
+  var label = document.getElementById('check-progress-label');
+  if(bar) bar.style.width = pct+'%';
+  if(label) label.textContent = done+' / '+total+' complete';
+}
+
+// ── TRAINING — QUIZ ───────────────────────────────────────────────────────────
+var QUIZ = [
+  { q: 'According to Palm Club\'s data, at what point in tenure are high performers most likely to exit?',
+    opts: ['0–3 months (onboarding)','6–14 months (mid-tenure)','24–36 months (senior stage)','At retirement or role ceiling'],
+    correct: 1,
+    feedback: 'Correct. The tenure exit analysis shows the sharpest peak for HP exits between months 6–14 — exactly when a promotion review should be occurring but often isn\'t.' },
+  { q: 'A high performer has been in role for 10 months with an average score of 82 and no promotion. They work part-time. What is the correct action?',
+    opts: ['Wait until 12 months — part-timers need more time','Initiate an immediate promotion review — they are past the 9-month trigger','Continue monitoring — their score hasn\'t reached 90','Suggest they convert to full-time before being considered'],
+    correct: 1,
+    feedback: 'Correct. The standardized framework sets a mandatory review at 9 months for all employees, including part-time. Part-time eligibility for promotion starts at 10 months — this employee is right at that mark.' },
+  { q: 'Palm Club data shows the median months to promotion for High Performers vs. Non-High Performers. What does the small gap between them indicate?',
+    opts: ['High performers are being promoted at the right pace','The promotion system is not differentiating based on performance','Non-HPs are catching up to HP performance levels','Branch managers are accurately calibrating promotion timelines'],
+    correct: 1,
+    feedback: 'Correct. A small gap means HPs are not being meaningfully rewarded faster than average performers — which undermines the signal that performance leads to advancement. This is a core driver of HP churn.' },
+  { q: 'What is the retention rate difference between High Performers who were promoted vs. those who were never promoted?',
+    opts: ['About 5 percentage points','Around 10 percentage points','Approximately 27 percentage points','There is no statistically meaningful difference'],
+    correct: 2,
+    feedback: 'Correct. The data shows a 27pp lift in retention for promoted HPs. This is the strongest single intervention available — more impactful than any other factor in the dataset.' }
+];
+var quizState = { current: 0, answers: {}, submitted: {} };
+
+function renderQuiz() {
+  var container = document.getElementById('quiz-container');
+  if(!container) return;
+  var idx = quizState.current;
+  var q = QUIZ[idx];
+  var html = '<div class="quiz-counter">Question '+(idx+1)+' of '+QUIZ.length+'</div>';
+  html += '<div class="quiz-q" style="margin-top:10px">'+q.q+'</div>';
+  ['A','B','C','D'].forEach(function(letter, i) {
+    var submitted = quizState.submitted[idx];
+    var cls = 'quiz-option';
+    if(submitted !== undefined) {
+      if(i === q.correct) cls += ' correct';
+      else if(i === submitted) cls += ' incorrect';
+    } else if(quizState.answers[idx] === i) {
+      cls += ' selected';
+    }
+    var clickFn = submitted !== undefined ? '' : ' onclick="selectQuizOption('+i+')"';
+    html += '<div class="'+cls+'"'+clickFn+'><div class="quiz-letter">'+letter+'</div>'+q.opts[i]+'</div>';
+  });
+  // feedback
+  if(quizState.submitted[idx] !== undefined) {
+    var pass = quizState.submitted[idx] === q.correct;
+    html += '<div class="quiz-feedback show" style="background:'+(pass?'var(--success-light)':'var(--danger-light)')+';color:'+(pass?'var(--success)':'var(--danger)')+';border:1px solid '+(pass?'rgba(74,140,111,0.25)':'rgba(212,83,74,0.2)')+';">'+(pass?'✅ ':'❌ ')+q.feedback+'</div>';
+  }
+  html += '<div class="quiz-nav">';
+  if(idx > 0) html += '<button class="training-btn ghost" onclick="quizNav(-1)">← Previous</button>';
+  else html += '<div></div>';
+  if(quizState.submitted[idx] === undefined && quizState.answers[idx] !== undefined) {
+    html += '<button class="training-btn primary" onclick="submitQuiz()">Submit Answer</button>';
+  } else if(quizState.submitted[idx] !== undefined && idx < QUIZ.length-1) {
+    html += '<button class="training-btn primary" onclick="quizNav(1)">Next Question →</button>';
+  } else if(quizState.submitted[idx] !== undefined && idx === QUIZ.length-1) {
+    var score = Object.keys(quizState.submitted).filter(function(k){return quizState.submitted[k]===QUIZ[k].correct;}).length;
+    html += '<span style="font-size:13px;font-weight:600;color:var(--success)">'+score+'/'+QUIZ.length+' correct 🎉</span>';
+  } else if(quizState.answers[idx] === undefined) {
+    html += '<span style="font-size:12px;color:var(--text-muted)">Select an answer</span>';
+  }
+  html += '</div>';
+  container.innerHTML = html;
+}
+function selectQuizOption(i) {
+  quizState.answers[quizState.current] = i;
+  renderQuiz();
+}
+function submitQuiz() {
+  quizState.submitted[quizState.current] = quizState.answers[quizState.current];
+  renderQuiz();
+}
+function quizNav(dir) {
+  quizState.current = Math.max(0, Math.min(QUIZ.length-1, quizState.current+dir));
+  renderQuiz();
+}
+
+// ── SPARKLINES ────────────────────────────────────────────────────────────────
+var SPARK_W = 72, SPARK_H = 28, SPARK_PAD = 3;
+
+function drawSparkline(canvasId) {
+  var canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+
+  // DPR-aware sizing for crisp rendering on retina screens
+  var dpr = window.devicePixelRatio || 1;
+  canvas.width  = SPARK_W * dpr;
+  canvas.height = SPARK_H * dpr;
+  canvas.style.width  = SPARK_W + 'px';
+  canvas.style.height = SPARK_H + 'px';
+
+  var ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  var W = SPARK_W, H = SPARK_H, pad = SPARK_PAD;
+  var raw = canvas.getAttribute('data-scores');
+
+  if(!raw || raw === '') {
+    ctx.strokeStyle = '#E2DDD5';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3,3]);
+    ctx.beginPath();
+    ctx.moveTo(pad, H/2);
+    ctx.lineTo(W-pad, H/2);
+    ctx.stroke();
+    return;
+  }
+
+  var scores = raw.split(',').map(Number).filter(function(v){return !isNaN(v);});
+  if(!scores.length) return;
+
+  if(scores.length === 1) {
+    var col1 = scores[0] >= CFG.hpThresh ? '#4A8C6F' : '#D4894A';
+    ctx.fillStyle = col1;
+    ctx.beginPath();
+    ctx.arc(W/2, H/2, 3, 0, Math.PI*2);
+    ctx.fill();
+    return;
+  }
+
+  // Value range — pad min/max so line doesn't hug edges
+  var minV = Math.min.apply(null, scores);
+  var maxV = Math.max.apply(null, scores);
+  // Always show full 0-100 context so threshold line is meaningful
+  minV = Math.min(minV, CFG.hpThresh - 5);
+  maxV = Math.max(maxV, CFG.hpThresh + 5);
+  var range = maxV - minV;
+
+  function xPos(i) { return pad + (i / (scores.length - 1)) * (W - pad * 2); }
+  function yPos(v) {
+    var clamped = Math.max(minV, Math.min(maxV, v));
+    return pad + (1 - (clamped - minV) / range) * (H - pad * 2);
+  }
+
+  // Colour logic
+  var allAbove = scores.every(function(s){return s >= CFG.hpThresh;});
+  var anyAbove = scores.some(function(s){return s >= CFG.hpThresh;});
+  var lineCol = allAbove ? '#4A8C6F' : anyAbove ? '#D4894A' : '#D4534A';
+  var fillCol = allAbove ? 'rgba(74,140,111,0.10)' : anyAbove ? 'rgba(212,137,74,0.08)' : 'rgba(212,83,74,0.09)';
+
+  ctx.clearRect(0, 0, W, H);
+
+  // HP threshold reference line
+  var threshY = yPos(CFG.hpThresh);
+  ctx.strokeStyle = 'rgba(200,169,110,0.5)';
+  ctx.lineWidth = 0.8;
+  ctx.setLineDash([2,2]);
+  ctx.beginPath();
+  ctx.moveTo(pad, threshY);
+  ctx.lineTo(W - pad, threshY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Fill under line
+  ctx.fillStyle = fillCol;
+  ctx.beginPath();
+  ctx.moveTo(xPos(0), H - pad);
+  scores.forEach(function(s,i){ ctx.lineTo(xPos(i), yPos(s)); });
+  ctx.lineTo(xPos(scores.length-1), H - pad);
+  ctx.closePath();
+  ctx.fill();
+
+  // Line
+  ctx.strokeStyle = lineCol;
+  ctx.lineWidth = 1.5;
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  scores.forEach(function(s,i){
+    if(i===0) ctx.moveTo(xPos(i), yPos(s));
+    else ctx.lineTo(xPos(i), yPos(s));
+  });
+  ctx.stroke();
+
+  // Dots on each data point
+  scores.forEach(function(s,i){
+    var isLast = (i === scores.length-1);
+    ctx.fillStyle = isLast ? lineCol : 'white';
+    ctx.strokeStyle = lineCol;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.arc(xPos(i), yPos(s), isLast ? 2.5 : 1.5, 0, Math.PI*2);
+    if(isLast) ctx.fill();
+    else { ctx.fill(); ctx.stroke(); }
+  });
+}
+
+// Redraw all visible sparklines (called on page resize)
+function redrawAllSparklines() {
+  document.querySelectorAll('.sparkline-canvas').forEach(function(c){
+    drawSparkline(c.id);
+  });
+}
+window.addEventListener('resize', redrawAllSparklines);
+
+// ── MOBILE NAV ────────────────────────────────────────────────────────────────
+function toggleMobNav() {
+  var sidebar  = document.getElementById('app-sidebar');
+  var overlay  = document.getElementById('mobOverlay');
+  var isOpen   = sidebar.classList.contains('open');
+  if(isOpen) { closeMobNav(); } else {
+    sidebar.classList.add('open');
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+}
+function closeMobNav() {
+  var sidebar = document.getElementById('app-sidebar');
+  var overlay = document.getElementById('mobOverlay');
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+// Close sidebar when a nav item is tapped on mobile
+var _origSwitchView = switchView;
+switchView = function(id, el) {
+  _origSwitchView(id, el);
+  if(window.innerWidth <= 768) closeMobNav();
+};
+
+// Init quiz on load
+renderQuiz();
+
+boot();
+</script>
+</body>
+</html>
